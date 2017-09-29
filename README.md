@@ -4,6 +4,7 @@ DbContextScope
 ```
 2017-09-39 - tncalvert
 This is a fork to support Entity Framework Core.
+As of right now, the project targets .NET 4.6.1.
 ```
 
 A simple and flexible way to manage your Entity Framework DbContext instances.
