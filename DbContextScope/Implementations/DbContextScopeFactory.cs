@@ -8,7 +8,7 @@
 using System;
 using System.Data;
 
-namespace DbContextScope {
+namespace EntityFrameworkCore.DbContextScope {
     public class DbContextScopeFactory : IDbContextScopeFactory {
         private readonly IDbContextFactory _dbContextFactory;
 

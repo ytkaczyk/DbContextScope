@@ -7,7 +7,7 @@
  */
 using System;
 
-namespace DbContextScope {
+namespace EntityFrameworkCore.DbContextScope {
     /// <summary>
     /// A read-only DbContextScope. Refer to the comments for IDbContextScope
     /// for more details.

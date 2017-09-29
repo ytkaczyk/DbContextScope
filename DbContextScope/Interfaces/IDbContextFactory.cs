@@ -7,7 +7,7 @@
  */
 using Microsoft.EntityFrameworkCore;
 
-namespace DbContextScope {
+namespace EntityFrameworkCore.DbContextScope {
     /// <summary>
     /// Factory for DbContext-derived classes that don't expose 
     /// a default constructor.

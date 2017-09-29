@@ -14,7 +14,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DbContextScope {
+namespace EntityFrameworkCore.DbContextScope {
     /// <summary>
     /// As its name suggests, DbContextCollection maintains a collection of DbContext instances.
     /// 

@@ -16,7 +16,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DbContextScope {
+namespace EntityFrameworkCore.DbContextScope {
     public class DbContextScope : IDbContextScope {
         private bool _disposed;
         private bool _readOnly;

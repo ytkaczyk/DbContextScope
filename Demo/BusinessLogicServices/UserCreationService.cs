@@ -1,4 +1,4 @@
-﻿using DbContextScope;
+﻿using EntityFrameworkCore.DbContextScope;
 using Numero3.EntityFramework.Demo.CommandModel;
 using Numero3.EntityFramework.Demo.DomainModel;
 using Numero3.EntityFramework.Demo.Repositories;

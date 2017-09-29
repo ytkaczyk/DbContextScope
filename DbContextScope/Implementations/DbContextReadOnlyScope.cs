@@ -7,7 +7,7 @@
  */
 using System.Data;
 
-namespace DbContextScope {
+namespace EntityFrameworkCore.DbContextScope {
     public class DbContextReadOnlyScope : IDbContextReadOnlyScope {
         private DbContextScope _internalScope;
 

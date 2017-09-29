@@ -7,7 +7,7 @@
  */
 using Microsoft.EntityFrameworkCore;
 
-namespace DbContextScope {
+namespace EntityFrameworkCore.DbContextScope {
     /// <summary>
     /// Convenience methods to retrieve ambient DbContext instances. 
     /// </summary>

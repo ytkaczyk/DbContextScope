@@ -7,7 +7,7 @@
  */
 using System;
 
-namespace DbContextScope {
+namespace EntityFrameworkCore.DbContextScope {
     public class AmbientContextSuppressor : IDisposable {
         private DbContextScope _savedScope;
         private bool _disposed;

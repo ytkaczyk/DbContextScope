@@ -1,4 +1,4 @@
-﻿using DbContextScope;
+﻿using EntityFrameworkCore.DbContextScope;
 using Numero3.EntityFramework.Demo.DatabaseContext;
 using System;
 using System.Linq;

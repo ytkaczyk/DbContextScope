@@ -1,4 +1,4 @@
-﻿using DbContextScope;
+﻿using EntityFrameworkCore.DbContextScope;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Numero3.EntityFramework.Demo.BusinessLogicServices;

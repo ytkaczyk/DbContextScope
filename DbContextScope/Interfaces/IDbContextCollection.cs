@@ -8,7 +8,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace DbContextScope {
+namespace EntityFrameworkCore.DbContextScope {
     /// <summary>
     /// Maintains a list of lazily-created DbContext instances.
     /// </summary>
