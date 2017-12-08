@@ -2,7 +2,7 @@ DbContextScope
 ==============
 
 ```
-2017-09-39 - tncalvert
+2017-09-29 - tncalvert
 This is a fork to support Entity Framework Core.
 As of right now, the project targets .NET 4.6.1.
 ```
