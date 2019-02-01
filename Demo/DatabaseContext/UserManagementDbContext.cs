@@ -1,21 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Numero3.EntityFramework.Demo.DomainModel;
+﻿using DbContextScope.Demo.DomainModel;
+using Microsoft.EntityFrameworkCore;
 
-namespace Numero3.EntityFramework.Demo.DatabaseContext {
-    public class UserManagementDbContext : DbContext {
-        // Map our 'User' model by convention
-        public DbSet<User> Users { get; set; }
-
-        public UserManagementDbContext(DbContextOptions<UserManagementDbContext> options)
-            : base(options) { }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<User>(builder => {
-                builder.Property(m => m.Name).IsRequired();
-                builder.Property(m => m.Email).IsRequired();
-            });
-        }
+namespace DbContextScope.Demo.DatabaseContext
+{
+  public class UserManagementDbContext : DbContext
+  {
+    public UserManagementDbContext(DbContextOptions<UserManagementDbContext> options)
+      : base(options)
+    {
     }
+
+    // Map our 'User' model by convention
+    public DbSet<User> Users { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      base.OnModelCreating(modelBuilder);
+
+      modelBuilder.Entity<User>(builder =>
+      {
+        builder.Property(m => m.Name).IsRequired();
+        builder.Property(m => m.Email).IsRequired();
+      });
+    }
+  }
 }

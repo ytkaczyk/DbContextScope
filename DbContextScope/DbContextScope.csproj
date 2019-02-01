@@ -19,7 +19,12 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/tncalvert/DbContextScope</RepositoryUrl>
     <PackageTags>EntityFramework EFCore DbContext DbContextScope</PackageTags>
+    <RootNamespace>EntityFrameworkCore.DbContextScope</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="DbContextScope.csproj.DotSettings" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.2.1" />
