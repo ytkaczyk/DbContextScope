@@ -5,11 +5,11 @@ namespace EntityFrameworkCore.DbContextScope
 {
   public class DbContextScopeFactory : IDbContextScopeFactory
   {
-    private readonly IDbContextFactory _dbContextFactory;
+    private readonly IAmbientDbContextFactory _ambientDbContextFactory;
 
-    public DbContextScopeFactory(IDbContextFactory dbContextFactory = null)
+    public DbContextScopeFactory(IAmbientDbContextFactory ambientDbContextFactory = null)
     {
-      _dbContextFactory = dbContextFactory;
+      _ambientDbContextFactory = ambientDbContextFactory;
     }
 
     public IDbContextScope Create(DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting)
@@ -18,7 +18,7 @@ namespace EntityFrameworkCore.DbContextScope
         joiningOption,
         false,
         null,
-        _dbContextFactory);
+        _ambientDbContextFactory);
     }
 
     public IDbContextReadOnlyScope CreateReadOnly(DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting)
@@ -26,7 +26,7 @@ namespace EntityFrameworkCore.DbContextScope
       return new DbContextReadOnlyScope(
         joiningOption,
         null,
-        _dbContextFactory);
+        _ambientDbContextFactory);
     }
 
     public IDbContextScope CreateWithTransaction(IsolationLevel isolationLevel)
@@ -35,7 +35,7 @@ namespace EntityFrameworkCore.DbContextScope
         DbContextScopeOption.ForceCreateNew,
         false,
         isolationLevel,
-        _dbContextFactory);
+        _ambientDbContextFactory);
     }
 
     public IDbContextReadOnlyScope CreateReadOnlyWithTransaction(IsolationLevel isolationLevel)
@@ -43,7 +43,7 @@ namespace EntityFrameworkCore.DbContextScope
       return new DbContextReadOnlyScope(
         DbContextScopeOption.ForceCreateNew,
         isolationLevel,
-        _dbContextFactory);
+        _ambientDbContextFactory);
     }
 
     public IDisposable SuppressAmbientContext()

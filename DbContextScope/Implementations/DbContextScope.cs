@@ -18,17 +18,17 @@ namespace EntityFrameworkCore.DbContextScope
     private bool _completed;
     private bool _disposed;
 
-    public DbContextScope(IDbContextFactory dbContextFactory = null) :
-      this(DbContextScopeOption.JoinExisting, false, null, dbContextFactory)
+    public DbContextScope(IAmbientDbContextFactory ambientDbContextFactory = null) :
+      this(DbContextScopeOption.JoinExisting, false, null, ambientDbContextFactory)
     {
     }
 
-    public DbContextScope(bool readOnly, IDbContextFactory dbContextFactory = null)
-      : this(DbContextScopeOption.JoinExisting, readOnly, null, dbContextFactory)
+    public DbContextScope(bool readOnly, IAmbientDbContextFactory ambientDbContextFactory = null)
+      : this(DbContextScopeOption.JoinExisting, readOnly, null, ambientDbContextFactory)
     {
     }
 
-    public DbContextScope(DbContextScopeOption joiningOption, bool readOnly, IsolationLevel? isolationLevel, IDbContextFactory dbContextFactory = null)
+    public DbContextScope(DbContextScopeOption joiningOption, bool readOnly, IsolationLevel? isolationLevel, IAmbientDbContextFactory ambientDbContextFactory = null)
     {
       if (isolationLevel.HasValue && joiningOption == DbContextScopeOption.JoinExisting)
       {
@@ -56,7 +56,7 @@ namespace EntityFrameworkCore.DbContextScope
       else
       {
         _nested = false;
-        _dbContexts = new DbContextCollection(readOnly, isolationLevel, dbContextFactory);
+        _dbContexts = new DbContextCollection(readOnly, isolationLevel, ambientDbContextFactory);
       }
 
       SetAmbientScope(this);

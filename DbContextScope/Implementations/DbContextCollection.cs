@@ -22,14 +22,14 @@ namespace EntityFrameworkCore.DbContextScope
   /// </summary>
   public class DbContextCollection : IDbContextCollection
   {
-    private readonly IDbContextFactory _dbContextFactory;
+    private readonly IAmbientDbContextFactory _ambientDbContextFactory;
     private readonly IsolationLevel? _isolationLevel;
     private readonly bool _readOnly;
     private readonly Dictionary<DbContext, IDbContextTransaction> _transactions;
     private bool _completed;
     private bool _disposed;
 
-    public DbContextCollection(bool readOnly = false, IsolationLevel? isolationLevel = null, IDbContextFactory dbContextFactory = null)
+    public DbContextCollection(bool readOnly = false, IsolationLevel? isolationLevel = null, IAmbientDbContextFactory ambientDbContextFactory = null)
     {
       _disposed = false;
       _completed = false;
@@ -39,7 +39,7 @@ namespace EntityFrameworkCore.DbContextScope
 
       _readOnly = readOnly;
       _isolationLevel = isolationLevel;
-      _dbContextFactory = dbContextFactory;
+      _ambientDbContextFactory = ambientDbContextFactory;
     }
 
     internal Dictionary<Type, DbContext> InitializedDbContexts { get; }
@@ -57,8 +57,8 @@ namespace EntityFrameworkCore.DbContextScope
       {
         // First time we've been asked for this particular DbContext type.
         // Create one, cache it and start its database transaction if needed.
-        var dbContext = _dbContextFactory != null
-          ? _dbContextFactory.CreateDbContext<TDbContext>()
+        var dbContext = _ambientDbContextFactory != null
+          ? _ambientDbContextFactory.CreateDbContext<TDbContext>()
           : Activator.CreateInstance<TDbContext>();
 
         InitializedDbContexts.Add(requestedType, dbContext);

@@ -15,7 +15,7 @@ namespace DbContextScope.Demo
     public static void Main(string[] args)
     {
       //-- Poor-man DI - build our dependencies by hand for this demo
-      var dbContextScopeFactory = new DbContextScopeFactory(new DbContextFactory());
+      var dbContextScopeFactory = new DbContextScopeFactory(new AmbientDbContextFactory());
       var ambientDbContextLocator = new AmbientDbContextLocator();
       var userRepository = new UserRepository(ambientDbContextLocator);
 
@@ -143,7 +143,7 @@ namespace DbContextScope.Demo
     }
   }
 
-  internal class DbContextFactory : IDbContextFactory
+  internal class AmbientDbContextFactory : IAmbientDbContextFactory
   {
     public TDbContext CreateDbContext<TDbContext>() where TDbContext : DbContext
     {

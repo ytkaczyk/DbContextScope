@@ -3,8 +3,7 @@
 namespace EntityFrameworkCore.DbContextScope
 {
   /// <summary>
-  /// Factory for DbContext-derived classes that don't expose
-  /// a default constructor.
+  /// Factory for DbContext-derived classes that don't expose a default constructor.
   /// </summary>
   /// <remarks>
   /// If your DbContext-derived classes have a default constructor,
@@ -22,7 +21,7 @@ namespace EntityFrameworkCore.DbContextScope
   /// In that case, you'll want to implement this interface and pass it to the DbContextScope
   /// you're creating so that DbContextScope is able to create your DbContext instances correctly.
   /// </remarks>
-  public interface IDbContextFactory
+  public interface IAmbientDbContextFactory
   {
     TDbContext CreateDbContext<TDbContext>() where TDbContext : DbContext;
   }

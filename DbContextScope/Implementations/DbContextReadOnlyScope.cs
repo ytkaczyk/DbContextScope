@@ -6,19 +6,19 @@ namespace EntityFrameworkCore.DbContextScope
   {
     private readonly DbContextScope _internalScope;
 
-    public DbContextReadOnlyScope(IDbContextFactory dbContextFactory = null)
-      : this(DbContextScopeOption.JoinExisting, null, dbContextFactory)
+    public DbContextReadOnlyScope(IAmbientDbContextFactory ambientDbContextFactory = null)
+      : this(DbContextScopeOption.JoinExisting, null, ambientDbContextFactory)
     {
     }
 
-    public DbContextReadOnlyScope(IsolationLevel isolationLevel, IDbContextFactory dbContextFactory = null)
-      : this(DbContextScopeOption.ForceCreateNew, isolationLevel, dbContextFactory)
+    public DbContextReadOnlyScope(IsolationLevel isolationLevel, IAmbientDbContextFactory ambientDbContextFactory = null)
+      : this(DbContextScopeOption.ForceCreateNew, isolationLevel, ambientDbContextFactory)
     {
     }
 
-    public DbContextReadOnlyScope(DbContextScopeOption joiningOption, IsolationLevel? isolationLevel, IDbContextFactory dbContextFactory = null)
+    public DbContextReadOnlyScope(DbContextScopeOption joiningOption, IsolationLevel? isolationLevel, IAmbientDbContextFactory ambientDbContextFactory = null)
     {
-      _internalScope = new DbContextScope(joiningOption, true, isolationLevel, dbContextFactory);
+      _internalScope = new DbContextScope(joiningOption, true, isolationLevel, ambientDbContextFactory);
     }
 
     public IDbContextCollection DbContexts => _internalScope.DbContexts;
