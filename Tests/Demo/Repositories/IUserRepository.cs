@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DbContextScope.Demo.DomainModel;
+using DbContextScopeTests.Demo.DomainModel;
 
-namespace DbContextScope.Demo.Repositories
+namespace DbContextScopeTests.Demo.Repositories
 {
   public interface IUserRepository
   {

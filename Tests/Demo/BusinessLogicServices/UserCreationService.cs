@@ -1,10 +1,10 @@
 ﻿using System;
-using DbContextScope.Demo.CommandModel;
-using DbContextScope.Demo.DomainModel;
-using DbContextScope.Demo.Repositories;
+using DbContextScopeTests.Demo.CommandModel;
+using DbContextScopeTests.Demo.DomainModel;
+using DbContextScopeTests.Demo.Repositories;
 using EntityFrameworkCore.DbContextScope;
 
-namespace DbContextScope.Demo.BusinessLogicServices
+namespace DbContextScopeTests.Demo.BusinessLogicServices
 {
   /*
    * Example business logic service implementing command functionalities (i.e. create / update actions).

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DbContextScope.Demo.DatabaseContext;
-using DbContextScope.Demo.DomainModel;
+using DbContextScopeTests.Demo.DatabaseContext;
+using DbContextScopeTests.Demo.DomainModel;
 using EntityFrameworkCore.DbContextScope;
 
-namespace DbContextScope.Demo.Repositories
+namespace DbContextScopeTests.Demo.Repositories
 {
   /*
    * An example "repository" relying on an ambient DbContext instance.

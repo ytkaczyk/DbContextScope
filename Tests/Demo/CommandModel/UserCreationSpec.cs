@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DbContextScope.Demo.CommandModel
+namespace DbContextScopeTests.Demo.CommandModel
 {
   /// <summary>
   /// Specifications of the CreateUser command. Defines the properties of a new user.

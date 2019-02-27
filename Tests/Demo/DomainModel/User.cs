@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DbContextScope.Demo.DomainModel
+namespace DbContextScopeTests.Demo.DomainModel
 {
   // Anemic model to keep this demo application simple.
   public class User

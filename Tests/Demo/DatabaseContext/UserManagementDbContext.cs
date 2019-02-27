@@ -1,16 +1,15 @@
-﻿using DbContextScope.Demo.DomainModel;
+﻿using DbContextScopeTests.Demo.DomainModel;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbContextScope.Demo.DatabaseContext
+namespace DbContextScopeTests.Demo.DatabaseContext
 {
   public class UserManagementDbContext : DbContext
   {
-    public UserManagementDbContext(DbContextOptions<UserManagementDbContext> options)
+    public UserManagementDbContext(DbContextOptions options)
       : base(options)
     {
     }
 
-    // Map our 'User' model by convention
     public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
