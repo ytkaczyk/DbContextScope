@@ -21,8 +21,7 @@ namespace DbContextScope.Tests
       var services = new ServiceCollection();
 
       // from library
-      services.AddScoped<IAmbientDbContextLocator, AmbientDbContextLocator>();
-      services.AddScoped<IDbContextScopeFactory, DbContextScopeFactory>();
+      services.AddDbContextScope();
 
       // from fixtureBase
       services.AddScoped<MemoryAmbientDbContextFactoryOptions>();
