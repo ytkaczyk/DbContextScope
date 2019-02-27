@@ -4,17 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace EntityFrameworkCore.DbContextScope
+namespace EntityFrameworkCore.DbContextScope.Implementations
 {
   internal sealed class EntityRefresh : IEntityRefresh
   {
-    private readonly DbContext contextInCurrentScope;
-    private readonly DbContext correspondingParentContext;
+    private readonly DbContext _contextInCurrentScope;
+    private readonly DbContext _correspondingParentContext;
 
     public EntityRefresh(DbContext contextInCurrentScope, DbContext correspondingParentContext)
     {
-      this.contextInCurrentScope = contextInCurrentScope;
-      this.correspondingParentContext = correspondingParentContext;
+      _contextInCurrentScope = contextInCurrentScope;
+      _correspondingParentContext = correspondingParentContext;
     }
 
     public void Refresh<TEntity>(TEntity toRefresh)
@@ -22,12 +22,12 @@ namespace EntityFrameworkCore.DbContextScope
       var stateInCurrentScope = getStateInCurrentScope(toRefresh);
       if (stateInCurrentScope != null)
       {
-        var stateInParentScope = getStateInParentScope<TEntity>(stateInCurrentScope);
+        var stateInParentScope = getStateInParentScope(stateInCurrentScope);
         if (stateInParentScope != null)
         {
           if (shouldRefresh(stateInParentScope))
           {
-            correspondingParentContext.Entry(stateInParentScope.Entity).Reload();
+            _correspondingParentContext.Entry(stateInParentScope.Entity).Reload();
           }
         }
       }
@@ -38,12 +38,12 @@ namespace EntityFrameworkCore.DbContextScope
       var stateInCurrentScope = getStateInCurrentScope(toRefresh);
       if (stateInCurrentScope != null)
       {
-        var stateInParentScope = getStateInParentScope<TEntity>(stateInCurrentScope);
+        var stateInParentScope = getStateInParentScope(stateInCurrentScope);
         if (stateInParentScope != null)
         {
           if (shouldRefresh(stateInParentScope))
           {
-            await correspondingParentContext.Entry(stateInParentScope.Entity).ReloadAsync();
+            await _correspondingParentContext.Entry(stateInParentScope.Entity).ReloadAsync();
           }
         }
       }
@@ -54,14 +54,14 @@ namespace EntityFrameworkCore.DbContextScope
       // First, we need to find what the EntityKey for this entity is. 
       // We need this EntityKey in order to check if this entity has
       // already been loaded in the parent DbContext's first-level cache (the ObjectStateManager).
-      var stateInCurrentScope = contextInCurrentScope.ChangeTracker
+      var stateInCurrentScope = _contextInCurrentScope.ChangeTracker
                                                      .GetInfrastructure()
                                                      .TryGetEntry(toRefresh);
 
       return stateInCurrentScope;
     }
 
-    private InternalEntityEntry getStateInParentScope<TEntity>(InternalEntityEntry stateInCurrentScope)
+    private InternalEntityEntry getStateInParentScope(InternalEntityEntry stateInCurrentScope)
     {
       // NOTE(tim): Thanks to ninety7 (https://github.com/ninety7/DbContextScope) and apawsey (https://github.com/apawsey/DbContextScope)
       // for examples on how identify the matching entities in EF Core.
@@ -72,7 +72,7 @@ namespace EntityFrameworkCore.DbContextScope
                          .ToArray();
 
       // Now we can see if that entity exists in the parent DbContext instance and refresh it.
-      var stateInParentScope = correspondingParentContext.ChangeTracker
+      var stateInParentScope = _correspondingParentContext.ChangeTracker
                                                          .GetInfrastructure()
                                                          .TryGetEntry(key, keyValues);
 

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace EntityFrameworkCore.DbContextScope
+namespace EntityFrameworkCore.DbContextScope.Implementations
 {
-  public class AmbientContextSuppressor : IDisposable
+  internal class AmbientContextSuppressor : IDisposable
   {
     private bool _disposed;
     private DbContextScope _savedScope;

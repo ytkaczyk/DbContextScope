@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data;
 
-namespace EntityFrameworkCore.DbContextScope
+namespace EntityFrameworkCore.DbContextScope.Implementations
 {
-  public class DbContextScopeFactory : IDbContextScopeFactory
+  internal class DbContextScopeFactory : IDbContextScopeFactory
   {
     private readonly IAmbientDbContextFactory _ambientDbContextFactory;
 

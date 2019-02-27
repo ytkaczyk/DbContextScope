@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace EntityFrameworkCore.DbContextScope
+namespace EntityFrameworkCore.DbContextScope.Implementations
 {
-  public static class AmbientContextScopeMagic
+  internal static class AmbientContextScopeMagic
   {
     /*
        * This is where all the magic happens. And there is not much of it.

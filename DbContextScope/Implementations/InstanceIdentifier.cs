@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EntityFrameworkCore.DbContextScope
+namespace EntityFrameworkCore.DbContextScope.Implementations
 {
   internal class InstanceIdentifier : MarshalByRefObject
   {

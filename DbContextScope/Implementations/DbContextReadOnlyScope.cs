@@ -1,8 +1,8 @@
 ﻿using System.Data;
 
-namespace EntityFrameworkCore.DbContextScope
+namespace EntityFrameworkCore.DbContextScope.Implementations
 {
-  public class DbContextReadOnlyScope : IDbContextReadOnlyScope
+  internal class DbContextReadOnlyScope : IDbContextReadOnlyScope
   {
     private readonly DbContextScope _internalScope;
 

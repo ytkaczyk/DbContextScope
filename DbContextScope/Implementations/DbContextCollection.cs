@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace EntityFrameworkCore.DbContextScope
+namespace EntityFrameworkCore.DbContextScope.Implementations
 {
   /// <summary>
   /// As its name suggests, DbContextCollection maintains a collection of DbContext instances.
@@ -20,7 +20,7 @@ namespace EntityFrameworkCore.DbContextScope
   /// - Takes care of committing / rolling back changes and transactions on all the DbContext
   /// instances it created when its Commit() or Rollback() method is called.
   /// </summary>
-  public class DbContextCollection : IDbContextCollection
+  internal class DbContextCollection : IDbContextCollection
   {
     private readonly IAmbientDbContextFactory _ambientDbContextFactory;
     private readonly IsolationLevel? _isolationLevel;

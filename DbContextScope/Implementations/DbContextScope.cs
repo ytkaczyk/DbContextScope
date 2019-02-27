@@ -7,9 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.DbContextScope
+namespace EntityFrameworkCore.DbContextScope.Implementations
 {
-  public class DbContextScope : IDbContextScope
+  internal class DbContextScope : IDbContextScope
   {
     private readonly DbContextCollection _dbContexts;
     private readonly bool _nested;

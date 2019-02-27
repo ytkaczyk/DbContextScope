@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.DbContextScope
+namespace EntityFrameworkCore.DbContextScope.Implementations
 {
-  public class AmbientDbContextLocator : IAmbientDbContextLocator
+  internal class AmbientDbContextLocator : IAmbientDbContextLocator
   {
     public TDbContext Get<TDbContext>() where TDbContext : DbContext
     {
