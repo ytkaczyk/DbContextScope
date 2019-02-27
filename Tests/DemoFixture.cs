@@ -14,7 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace DbContextScopeTests
 {
   [TestClass]
-  public class DbContextScopeFixture
+  public class DemoFixture
   {
     private static ServiceProvider fixtureServiceProvider;
     private IServiceScope _testServiceScope;
