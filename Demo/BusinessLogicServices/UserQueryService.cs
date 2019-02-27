@@ -36,7 +36,7 @@ namespace DbContextScope.Demo.BusinessLogicServices
        */
       using (var dbContextScope = _dbContextScopeFactory.CreateReadOnly())
       {
-        var dbContext = dbContextScope.DbContexts.Get<UserManagementDbContext>();
+        var dbContext = dbContextScope.Get<UserManagementDbContext>();
         var user = dbContext.Users.Find(userId);
 
         if (user == null)
@@ -52,7 +52,7 @@ namespace DbContextScope.Demo.BusinessLogicServices
     {
       using (var dbContextScope = _dbContextScopeFactory.CreateReadOnly())
       {
-        var dbContext = dbContextScope.DbContexts.Get<UserManagementDbContext>();
+        var dbContext = dbContextScope.Get<UserManagementDbContext>();
 
         return dbContext.Users.Where(u => userIds.Contains(u.Id)).ToList();
       }

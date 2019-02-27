@@ -119,7 +119,7 @@ namespace DbContextScope.Demo
 
           using (var parentScope = dbContextScopeFactory.Create())
           {
-            var parentDbContext = parentScope.DbContexts.Get<UserManagementDbContext>();
+            var parentDbContext = parentScope.Get<UserManagementDbContext>();
 
             // Load John in the parent DbContext
             var john = await parentDbContext.Users.FindAsync(johnSpec.Id);

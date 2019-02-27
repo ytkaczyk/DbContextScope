@@ -35,7 +35,7 @@ namespace DbContextScope.Tests.Demo.BusinessLogicServices
        */
       using (var dbContextScope = _dbContextScopeFactory.CreateReadOnly())
       {
-        var dbContext = dbContextScope.DbContexts.Get<TestDbContext>();
+        var dbContext = dbContextScope.Get<TestDbContext>();
         var user = dbContext.Users.Find(userId);
 
         if (user == null)
@@ -51,7 +51,7 @@ namespace DbContextScope.Tests.Demo.BusinessLogicServices
     {
       using (var dbContextScope = _dbContextScopeFactory.CreateReadOnly())
       {
-        var dbContext = dbContextScope.DbContexts.Get<TestDbContext>();
+        var dbContext = dbContextScope.Get<TestDbContext>();
 
         return dbContext.Users.Where(u => userIds.Contains(u.Id)).ToList();
       }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,14 +25,8 @@ namespace EntityFrameworkCore.DbContextScope
   /// or query classes to access the ambient DbContext instances without giving them access to the actual
   /// DbContextScope).
   /// </summary>
-  public interface IDbContextScope : IDisposable
+  public interface IDbContextScope : IDbContextReadOnlyScope
   {
-    /// <summary>
-    /// The DbContext instances that this DbContextScope manages. Don't call SaveChanges() on the DbContext themselves!
-    /// Save the scope instead.
-    /// </summary>
-    IDbContextCollection DbContexts { get; }
-
     /// <summary>
     /// Saves the changes in all the DbContext instances that were created within this scope.
     /// This method can only be called once per scope.

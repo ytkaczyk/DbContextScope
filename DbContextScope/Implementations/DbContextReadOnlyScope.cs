@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.DbContextScope.Implementations
 {
@@ -11,7 +12,10 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       _internalScope = new DbContextScope(joiningOption, true, isolationLevel, ambientDbContextFactory);
     }
 
-    public IDbContextCollection DbContexts => _internalScope.DbContexts;
+    public TDbContext Get<TDbContext>() where TDbContext : DbContext
+    {
+      return _internalScope.Get<TDbContext>();
+    }
 
     public void Dispose()
     {

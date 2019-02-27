@@ -52,7 +52,10 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       AmbientContextScopeMagic.SetAmbientScope(this);
     }
 
-    public IDbContextCollection DbContexts => _dbContexts;
+    public TDbContext Get<TDbContext>() where TDbContext : DbContext
+    {
+      return _dbContexts.Get<TDbContext>();
+    }
 
     public int SaveChanges()
     {

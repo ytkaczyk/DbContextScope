@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.DbContextScope
 {
@@ -8,9 +9,6 @@ namespace EntityFrameworkCore.DbContextScope
   /// </summary>
   public interface IDbContextReadOnlyScope : IDisposable
   {
-    /// <summary>
-    /// The DbContext instances that this DbContextScope manages.
-    /// </summary>
-    IDbContextCollection DbContexts { get; }
+    TDbContext Get<TDbContext>() where TDbContext : DbContext;
   }
 }

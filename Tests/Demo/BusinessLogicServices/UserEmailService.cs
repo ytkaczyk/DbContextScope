@@ -46,7 +46,7 @@ namespace DbContextScope.Tests.Demo.BusinessLogicServices
       // guaranteed to get persisted regardless of what happens after this method has completed.
       using (var dbContextScope = _dbContextScopeFactory.Create(DbContextScopeOption.ForceCreateNew))
       {
-        var dbContext = dbContextScope.DbContexts.Get<TestDbContext>();
+        var dbContext = dbContextScope.Get<TestDbContext>();
         var user = dbContext.Users.Find(userId);
 
         if (user == null)

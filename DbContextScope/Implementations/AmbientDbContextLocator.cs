@@ -8,7 +8,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
     {
       var ambientDbContextScope = AmbientContextScopeMagic.GetAmbientScope();
 
-      return ambientDbContextScope?.DbContexts.Get<TDbContext>();
+      return ambientDbContextScope?.Get<TDbContext>();
     }
   }
 }

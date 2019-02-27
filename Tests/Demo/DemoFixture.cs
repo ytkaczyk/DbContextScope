@@ -99,7 +99,7 @@ namespace DbContextScope.Tests.Demo
 
       using (var parentScope = DBContextScopeFactory.Create())
       {
-        var parentDbContext = parentScope.DbContexts.Get<TestDbContext>();
+        var parentDbContext = parentScope.Get<TestDbContext>();
 
         // Load John in the parent DbContext
         var john = parentDbContext.Users.Find(johnSpec.Id);
