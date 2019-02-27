@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using DbContextScope.Tests.DatabaseContext;
 using DbContextScope.Tests.Demo.BusinessLogicServices;
 using DbContextScope.Tests.Demo.CommandModel;
-using DbContextScope.Tests.Demo.DatabaseContext;
 using DbContextScope.Tests.Demo.Repositories;
 using EntityFrameworkCore.DbContextScope;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +17,7 @@ namespace DbContextScope.Tests.Demo
     protected override void OnTestSetup(ServiceCollection services)
     {
       base.OnTestSetup(services);
-      
+
       services.AddScoped<IUserRepository, UserRepository>();
 
       services.AddScoped<UserCreationService>();
@@ -30,6 +30,7 @@ namespace DbContextScope.Tests.Demo
     private UserQueryService UserQueryService => TestServiceProvider.GetRequiredService<UserQueryService>();
     private IDbContextScopeFactory DBContextScopeFactory => TestServiceProvider.GetRequiredService<IDbContextScopeFactory>();
     private UserEmailService UserEmailService => TestServiceProvider.GetRequiredService<UserEmailService>();
+    private UserCreditScoreService UserCreditScoreService => TestServiceProvider.GetRequiredService<UserCreditScoreService>();
 
     [TestMethod]
     public void Create_and_retrieve_user_should_work()
@@ -50,7 +51,7 @@ namespace DbContextScope.Tests.Demo
       UserCreationService.CreateListOfUsers(johnSpec, jeanneSpec);
 
       var createdUsers = UserQueryService.GetUsers(johnSpec.Id, jeanneSpec.Id);
-      
+
       Assert.AreEqual(2, createdUsers.Count());
     }
 
@@ -73,7 +74,7 @@ namespace DbContextScope.Tests.Demo
       var johnSpec = new UserCreationSpec("John", "john@example.com");
       var jeanneSpec = new UserCreationSpec("Jeanne", "jeanne@example.com");
       UserCreationService.CreateListOfUsers(johnSpec, jeanneSpec);
-      
+
       var usersFoundAsync = await UserQueryService.GetTwoUsersAsync(johnSpec.Id, jeanneSpec.Id);
 
       Assert.AreEqual(2, usersFoundAsync.Count);
@@ -84,7 +85,7 @@ namespace DbContextScope.Tests.Demo
     {
       var johnSpec = new UserCreationSpec("John", "john@example.com");
       UserCreationService.CreateUser(johnSpec);
-      
+
       var userMaybeUncommitted = UserQueryService.GetUserUncommitted(johnSpec.Id);
 
       Assert.IsNotNull(userMaybeUncommitted);
@@ -98,7 +99,7 @@ namespace DbContextScope.Tests.Demo
 
       using (var parentScope = DBContextScopeFactory.Create())
       {
-        var parentDbContext = parentScope.DbContexts.Get<UserManagementDbContext>();
+        var parentDbContext = parentScope.DbContexts.Get<TestDbContext>();
 
         // Load John in the parent DbContext
         var john = parentDbContext.Users.Find(johnSpec.Id);
@@ -114,6 +115,33 @@ namespace DbContextScope.Tests.Demo
         // made to John by SendWelcomeEmail() will remain persisted in the database as SendWelcomeEmail()
         // forced the creation of a new DbContextScope.
       }
+    }
+
+    [TestMethod]
+    public void Update_user_CreditScore_for_all_users_in_parallel_should_work()
+    {
+      var johnSpec = new UserCreationSpec("John", "john@example.com");
+      var jeanneSpec = new UserCreationSpec("Jeanne", "jeanne@example.com");
+      var julieSpec = new UserCreationSpec("Julie", "julie@example.com");
+      var marcSpec = new UserCreationSpec("Marc", "marc@example.com");
+      var marysSpec = new UserCreationSpec("Mary", "mary@example.com");
+
+      UserCreationService.CreateListOfUsers(johnSpec, jeanneSpec, julieSpec, marcSpec, marysSpec);
+
+      var scoresBefore = UserQueryService.GetUsers(johnSpec.Id, jeanneSpec.Id, julieSpec.Id, marcSpec.Id, marysSpec.Id)
+                                         .Select(u => u.CreditScore)
+                                         .ToArray();
+      Assert.AreEqual(5, scoresBefore.Length);
+      Array.ForEach(scoresBefore, s => Assert.AreEqual(0, s));
+
+      UserCreditScoreService.UpdateCreditScoreForAllUsers();
+
+      var scoresAfter = UserQueryService.GetUsers(johnSpec.Id, jeanneSpec.Id, julieSpec.Id, marcSpec.Id, marysSpec.Id)
+                                         .Select(u => u.CreditScore)
+                                         .ToArray();
+
+      Assert.AreEqual(5, scoresAfter.Length);
+      Array.ForEach(scoresAfter, s => Assert.AreNotEqual(0, s));
     }
   }
 }
