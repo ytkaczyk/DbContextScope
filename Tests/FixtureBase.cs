@@ -25,8 +25,8 @@ namespace DbContextScopeTests
       services.AddScoped<IDbContextScopeFactory, DbContextScopeFactory>();
 
       // from fixtureBase
-      services.AddScoped<AmbientDbContextFactoryOptions>();
-      services.AddScoped<IAmbientDbContextFactory, AmbientDbContextFactory>();
+      services.AddScoped<MemoryAmbientDbContextFactoryOptions>();
+      services.AddScoped<IAmbientDbContextFactory, MemoryAmbientDbContextFactory>();
 
       // from test
       OnTestSetup(services);
@@ -36,7 +36,7 @@ namespace DbContextScopeTests
       _testServiceScope = _testContainer.CreateScope();
       TestServiceProvider = _testServiceScope.ServiceProvider;
 
-      var ambientDbContextFactoryOptions = TestServiceProvider.GetRequiredService<AmbientDbContextFactoryOptions>();
+      var ambientDbContextFactoryOptions = TestServiceProvider.GetRequiredService<MemoryAmbientDbContextFactoryOptions>();
       ambientDbContextFactoryOptions.DbContextScopeKey = $"DbContextScopeTestDatabase_{TestContext.FullyQualifiedTestClassName}::{TestContext.TestName}";
     }
 
@@ -54,16 +54,16 @@ namespace DbContextScopeTests
       _testContainer = null;
     }
 
-    private class AmbientDbContextFactoryOptions
+    private class MemoryAmbientDbContextFactoryOptions
     {
       public string DbContextScopeKey { get; set; }
     }
 
-    private class AmbientDbContextFactory : IAmbientDbContextFactory
+    private class MemoryAmbientDbContextFactory : IAmbientDbContextFactory
     {
-      private readonly AmbientDbContextFactoryOptions _options;
+      private readonly MemoryAmbientDbContextFactoryOptions _options;
 
-      public AmbientDbContextFactory(AmbientDbContextFactoryOptions options)
+      public MemoryAmbientDbContextFactory(MemoryAmbientDbContextFactoryOptions options)
       {
         _options = options;
       }
