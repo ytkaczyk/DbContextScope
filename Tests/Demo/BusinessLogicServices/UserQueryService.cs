@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using DbContextScope.Tests.Demo.DatabaseContext;
-using DbContextScope.Tests.Demo.DomainModel;
+using DbContextScope.Tests.DatabaseContext;
 using DbContextScope.Tests.Demo.Repositories;
 using EntityFrameworkCore.DbContextScope;
 
@@ -36,7 +35,7 @@ namespace DbContextScope.Tests.Demo.BusinessLogicServices
        */
       using (var dbContextScope = _dbContextScopeFactory.CreateReadOnly())
       {
-        var dbContext = dbContextScope.DbContexts.Get<UserManagementDbContext>();
+        var dbContext = dbContextScope.DbContexts.Get<TestDbContext>();
         var user = dbContext.Users.Find(userId);
 
         if (user == null)
@@ -52,7 +51,7 @@ namespace DbContextScope.Tests.Demo.BusinessLogicServices
     {
       using (var dbContextScope = _dbContextScopeFactory.CreateReadOnly())
       {
-        var dbContext = dbContextScope.DbContexts.Get<UserManagementDbContext>();
+        var dbContext = dbContextScope.DbContexts.Get<TestDbContext>();
 
         return dbContext.Users.Where(u => userIds.Contains(u.Id)).ToList();
       }

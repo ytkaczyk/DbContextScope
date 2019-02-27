@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace DbContextScope.Tests.Demo.DomainModel
+namespace DbContextScope.Tests.DatabaseContext
 {
-  // Anemic model to keep this demo application simple.
   public class User
   {
     public Guid Id { get; set; }
@@ -11,6 +11,7 @@ namespace DbContextScope.Tests.Demo.DomainModel
     public int CreditScore { get; set; }
     public bool WelcomeEmailSent { get; set; }
     public DateTime CreatedOn { get; set; }
+    public ICollection<Post> Posts { get; set; }
 
     public override string ToString()
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DbContextScope.Tests.Demo.DomainModel;
+using DbContextScope.Tests.DatabaseContext;
 
 namespace DbContextScope.Tests.Demo.Repositories
 {

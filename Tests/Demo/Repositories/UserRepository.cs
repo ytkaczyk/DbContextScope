@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DbContextScope.Tests.Demo.DatabaseContext;
-using DbContextScope.Tests.Demo.DomainModel;
+using DbContextScope.Tests.DatabaseContext;
 using EntityFrameworkCore.DbContextScope;
 
 namespace DbContextScope.Tests.Demo.Repositories
@@ -31,11 +30,11 @@ namespace DbContextScope.Tests.Demo.Repositories
       _ambientDbContextLocator = ambientDbContextLocator ?? throw new ArgumentNullException(nameof(ambientDbContextLocator));
     }
 
-    private UserManagementDbContext DbContext
+    private TestDbContext DbContext
     {
       get
       {
-        var dbContext = _ambientDbContextLocator.Get<UserManagementDbContext>();
+        var dbContext = _ambientDbContextLocator.Get<TestDbContext>();
 
         if (dbContext == null)
         {

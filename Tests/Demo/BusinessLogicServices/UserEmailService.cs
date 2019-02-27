@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DbContextScope.Tests.Demo.DatabaseContext;
-using DbContextScope.Tests.Demo.DomainModel;
+using DbContextScope.Tests.DatabaseContext;
 using EntityFrameworkCore.DbContextScope;
 
 namespace DbContextScope.Tests.Demo.BusinessLogicServices
@@ -47,7 +46,7 @@ namespace DbContextScope.Tests.Demo.BusinessLogicServices
       // guaranteed to get persisted regardless of what happens after this method has completed.
       using (var dbContextScope = _dbContextScopeFactory.Create(DbContextScopeOption.ForceCreateNew))
       {
-        var dbContext = dbContextScope.DbContexts.Get<UserManagementDbContext>();
+        var dbContext = dbContextScope.DbContexts.Get<TestDbContext>();
         var user = dbContext.Users.Find(userId);
 
         if (user == null)

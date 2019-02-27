@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DbContextScope.Tests.Demo.DatabaseContext;
+using DbContextScope.Tests.DatabaseContext;
 using EntityFrameworkCore.DbContextScope;
 
 namespace DbContextScope.Tests.Demo.BusinessLogicServices
@@ -25,7 +25,7 @@ namespace DbContextScope.Tests.Demo.BusinessLogicServices
       using (var dbContextScope = _dbContextScopeFactory.Create())
       {
         //-- Get all users
-        var dbContext = dbContextScope.DbContexts.Get<UserManagementDbContext>();
+        var dbContext = dbContextScope.DbContexts.Get<TestDbContext>();
         var userIds = dbContext.Users.Select(u => u.Id).ToList();
 
         Console.WriteLine("Found {0} users in the database. Will calculate and store their credit scores in parallel.", userIds.Count);
@@ -53,7 +53,7 @@ namespace DbContextScope.Tests.Demo.BusinessLogicServices
     {
       using (var dbContextScope = _dbContextScopeFactory.Create())
       {
-        var dbContext = dbContextScope.DbContexts.Get<UserManagementDbContext>();
+        var dbContext = dbContextScope.DbContexts.Get<TestDbContext>();
         var user = dbContext.Users.Find(userId);
         if (user == null)
         {

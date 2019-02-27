@@ -1,6 +1,6 @@
 ﻿using System;
+using DbContextScope.Tests.DatabaseContext;
 using DbContextScope.Tests.Demo.CommandModel;
-using DbContextScope.Tests.Demo.DomainModel;
 using DbContextScope.Tests.Demo.Repositories;
 using EntityFrameworkCore.DbContextScope;
 
