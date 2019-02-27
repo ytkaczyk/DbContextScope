@@ -6,7 +6,7 @@ namespace EntityFrameworkCore.DbContextScope
   {
     public TDbContext Get<TDbContext>() where TDbContext : DbContext
     {
-      var ambientDbContextScope = DbContextScope.GetAmbientScope();
+      var ambientDbContextScope = AmbientContextScopeMagic.GetAmbientScope();
 
       return ambientDbContextScope?.DbContexts.Get<TDbContext>();
     }

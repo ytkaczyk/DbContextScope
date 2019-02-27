@@ -4,34 +4,34 @@ using System.Threading;
 namespace EntityFrameworkCore.DbContextScope
 {
   /// <summary>
-  /// Provides a way to set contextual data that flows with the call and
-  /// async context of a test or invocation.
-  /// http://www.cazzulino.com/callcontext-netstandard-netcore.html
+  /// Provides a way to set contextual data that flows with the call and async context of a test or invocation.
   /// </summary>
-  internal static class CallContext
+  /// <remarks>
+  /// Represents the CallContext form .netframework for .netcore.
+  /// https://www.cazzulino.com/callcontext-netstandard-netcore.html
+  /// </remarks>
+  public static class CallContext
   {
-    private static readonly ConcurrentDictionary<string, AsyncLocal<object>> state = new ConcurrentDictionary<string, AsyncLocal<object>>();
-
     /// <summary>
     /// Stores a given object and associates it with the specified name.
     /// </summary>
     /// <param name="name">The name with which to associate the new item in the call context.</param>
     /// <param name="data">The object to store in the call context.</param>
-    public static void SetData(string name, object data)
-    {
-      state.GetOrAdd(name, _ => new AsyncLocal<object>()).Value = data;
-    }
+    public static void SetData<T>(string name, T data) =>
+      TypedCallContext<T>.State.GetOrAdd(name, _ => new AsyncLocal<T>()).Value = data;
 
     /// <summary>
-    /// Retrieves an object with the specified name from the <see cref="CallContext" />.
+    /// Retrieves an object with the specified name from the <see cref="CallContext"/>.
     /// </summary>
+    /// <typeparam name="T">The type of the data being retrieved. Must match the type used when the <paramref name="name"/> was set via <see cref="SetData{T}(string, T)"/>.</typeparam>
     /// <param name="name">The name of the item in the call context.</param>
-    /// <returns>The object in the call context associated with the specified name, or <see langword="null" /> if not found.</returns>
-    public static object GetData(string name)
+    /// <returns>The object in the call context associated with the specified name, or a default value for <typeparamref name="T"/> if none is found.</returns>
+    public static T GetData<T>(string name) =>
+      TypedCallContext<T>.State.TryGetValue(name, out AsyncLocal<T> data) ? data.Value : default(T);
+
+    private static class TypedCallContext<T>
     {
-      return state.TryGetValue(name, out var data)
-        ? data.Value
-        : null;
+      public static readonly ConcurrentDictionary<string, AsyncLocal<T>> State = new ConcurrentDictionary<string, AsyncLocal<T>>();
     }
   }
 }

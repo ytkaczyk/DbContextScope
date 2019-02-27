@@ -9,7 +9,7 @@ namespace EntityFrameworkCore.DbContextScope
 
     public AmbientContextSuppressor()
     {
-      _savedScope = DbContextScope.GetAmbientScope();
+      _savedScope = AmbientContextScopeMagic.GetAmbientScope();
 
       // We're hiding the ambient scope but not removing its instance
       // altogether. This is to be tolerant to some programming errors. 
@@ -31,7 +31,7 @@ namespace EntityFrameworkCore.DbContextScope
       // that happen. Hiding the ambient scope (i.e. clearing the CallContext
       // in our execution flow but leaving the ambient scope instance untouched)
       // is safe.
-      DbContextScope.HideAmbientScope();
+      AmbientContextScopeMagic.HideAmbientScope();
     }
 
     public void Dispose()
@@ -43,7 +43,7 @@ namespace EntityFrameworkCore.DbContextScope
 
       if (_savedScope != null)
       {
-        DbContextScope.SetAmbientScope(_savedScope);
+        AmbientContextScopeMagic.SetAmbientScope(_savedScope);
         _savedScope = null;
       }
 

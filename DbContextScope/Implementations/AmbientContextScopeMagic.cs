@@ -98,7 +98,7 @@ namespace EntityFrameworkCore.DbContextScope
       }
 
       //return Thread.CurrentThread.GetExecutionContextReader().LogicalCallContext.GetData(name);
-      var current = CallContext.GetData(ambientDbContextScopeKey) as InstanceIdentifier;
+      var current = CallContext.GetData<InstanceIdentifier>(ambientDbContextScopeKey);
 
       if (current == newAmbientScope.InstanceIdentifier)
       {
@@ -118,8 +118,8 @@ namespace EntityFrameworkCore.DbContextScope
     /// </summary>
     internal static void RemoveAmbientScope()
     {
-      var current = CallContext.GetData(ambientDbContextScopeKey) as InstanceIdentifier;
-      CallContext.SetData(ambientDbContextScopeKey, null);
+      var current = CallContext.GetData<InstanceIdentifier>(ambientDbContextScopeKey);
+      CallContext.SetData<InstanceIdentifier>(ambientDbContextScopeKey, null);
 
       // If there was an ambient scope, we can stop tracking it now
       if (current != null)
@@ -134,7 +134,7 @@ namespace EntityFrameworkCore.DbContextScope
     /// </summary>
     internal static void HideAmbientScope()
     {
-      CallContext.SetData(ambientDbContextScopeKey, null);
+      CallContext.SetData<InstanceIdentifier>(ambientDbContextScopeKey, null);
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ namespace EntityFrameworkCore.DbContextScope
     internal static DbContextScope GetAmbientScope()
     {
       // Retrieve the identifier of the ambient scope (if any)
-      var instanceIdentifier = CallContext.GetData(ambientDbContextScopeKey) as InstanceIdentifier;
+      var instanceIdentifier = CallContext.GetData<InstanceIdentifier>(ambientDbContextScopeKey);
       if (instanceIdentifier == null)
       {
         return null; // Either no ambient context has been set or we've crossed an app domain boundary and have (intentionally) lost the ambient context
