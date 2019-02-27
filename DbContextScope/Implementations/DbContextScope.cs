@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.DbContextScope
 {
@@ -17,16 +18,6 @@ namespace EntityFrameworkCore.DbContextScope
     private readonly bool _readOnly;
     private bool _completed;
     private bool _disposed;
-
-    public DbContextScope(IAmbientDbContextFactory ambientDbContextFactory = null) :
-      this(DbContextScopeOption.JoinExisting, false, null, ambientDbContextFactory)
-    {
-    }
-
-    public DbContextScope(bool readOnly, IAmbientDbContextFactory ambientDbContextFactory = null)
-      : this(DbContextScopeOption.JoinExisting, readOnly, null, ambientDbContextFactory)
-    {
-    }
 
     public DbContextScope(DbContextScopeOption joiningOption, bool readOnly, IsolationLevel? isolationLevel, IAmbientDbContextFactory ambientDbContextFactory = null)
     {
@@ -179,7 +170,7 @@ namespace EntityFrameworkCore.DbContextScope
           continue; // No DbContext of this type has been created in the parent scope yet. So no need to refresh anything for this DbContext type.
         }
 
-        var refreshStrategy = new EntityRefresh(contextInCurrentScope, correspondingParentContext);
+        var refreshStrategy = getRefreshStrategy(contextInCurrentScope, correspondingParentContext);
         // Both our scope and the parent scope have an instance of the same DbContext type. 
         // We can now look in the parent DbContext instance for entities that need to
         // be refreshed.
@@ -220,12 +211,17 @@ namespace EntityFrameworkCore.DbContextScope
           continue;
         }
 
-        var refreshStrategy = new EntityRefresh(contextInCurrentScope, correspondingParentContext);
+        var refreshStrategy = getRefreshStrategy(contextInCurrentScope, correspondingParentContext);
         foreach (var toRefresh in entitiesToRefresh)
         {
           await refreshStrategy.RefreshAsync(toRefresh);
         }
       }
+    }
+
+    private static IEntityRefresh getRefreshStrategy(DbContext contextInCurrentScope, DbContext correspondingParentContext)
+    {
+      return new EntityRefresh(contextInCurrentScope, correspondingParentContext);
     }
 
     public void Dispose()

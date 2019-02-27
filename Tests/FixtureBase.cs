@@ -1,5 +1,4 @@
 ﻿using System;
-using DbContextScopeTests.Demo.DatabaseContext;
 using EntityFrameworkCore.DbContextScope;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -75,7 +74,9 @@ namespace DbContextScopeTests
                     .UseInMemoryDatabase(_options.DbContextScopeKey)
                     .ConfigureWarnings(warnings => { warnings.Ignore(InMemoryEventId.TransactionIgnoredWarning); });
 
-        return new UserManagementDbContext(config.Options) as TDbContext;
+        var instance = Activator.CreateInstance(typeof(TDbContext), config.Options);
+
+        return (TDbContext)instance;
       }
     }
   }
