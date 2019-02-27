@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using DbContextScopeTests.Demo.BusinessLogicServices;
-using DbContextScopeTests.Demo.CommandModel;
-using DbContextScopeTests.Demo.DatabaseContext;
-using DbContextScopeTests.Demo.Repositories;
+using DbContextScope.Tests.Demo.BusinessLogicServices;
+using DbContextScope.Tests.Demo.CommandModel;
+using DbContextScope.Tests.Demo.DatabaseContext;
+using DbContextScope.Tests.Demo.Repositories;
 using EntityFrameworkCore.DbContextScope;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DbContextScopeTests.Demo
+namespace DbContextScope.Tests.Demo
 {
   [TestClass]
   public class DemoFixture : FixtureBase

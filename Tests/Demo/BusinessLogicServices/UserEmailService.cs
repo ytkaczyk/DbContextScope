@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using DbContextScopeTests.Demo.DatabaseContext;
-using DbContextScopeTests.Demo.DomainModel;
+using DbContextScope.Tests.Demo.DatabaseContext;
+using DbContextScope.Tests.Demo.DomainModel;
 using EntityFrameworkCore.DbContextScope;
 
-namespace DbContextScopeTests.Demo.BusinessLogicServices
+namespace DbContextScope.Tests.Demo.BusinessLogicServices
 {
   public class UserEmailService
   {

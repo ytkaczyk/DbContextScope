@@ -1,9 +1,9 @@
-﻿using DbContextScopeTests.Demo.BusinessLogicServices;
-using DbContextScopeTests.Demo.Repositories;
+﻿using DbContextScope.Tests.Demo.BusinessLogicServices;
+using DbContextScope.Tests.Demo.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DbContextScopeTests
+namespace DbContextScope.Tests
 {
   [TestClass]
   public class DbContextScopeFixture : FixtureBase

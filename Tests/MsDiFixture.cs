@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DbContextScopeTests
+namespace DbContextScope.Tests
 {
   [TestClass]
   public class MsDiFixture

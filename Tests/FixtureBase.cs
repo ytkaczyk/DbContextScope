@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DbContextScopeTests
+namespace DbContextScope.Tests
 {
   public abstract class FixtureBase
   {

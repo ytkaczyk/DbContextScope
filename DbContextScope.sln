@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbContextScope", "DbContext
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbContextScope.Demo", "Demo\DbContextScope.Demo.csproj", "{BB1A9648-FEF6-4A80-B7EC-C0C8B69698FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbContextScopeTests", "Tests\DbContextScopeTests.csproj", "{223B13D3-CFE5-4EA3-9C78-4604C5C98028}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbContextScope.Tests", "Tests\DbContextScope.Tests.csproj", "{223B13D3-CFE5-4EA3-9C78-4604C5C98028}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

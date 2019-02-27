@@ -1,7 +1,7 @@
-﻿using DbContextScopeTests.Demo.DomainModel;
+﻿using DbContextScope.Tests.Demo.DomainModel;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbContextScopeTests.Demo.DatabaseContext
+namespace DbContextScope.Tests.Demo.DatabaseContext
 {
   public class UserManagementDbContext : DbContext
   {

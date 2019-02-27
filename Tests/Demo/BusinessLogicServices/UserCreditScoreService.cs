@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DbContextScopeTests.Demo.DatabaseContext;
+using DbContextScope.Tests.Demo.DatabaseContext;
 using EntityFrameworkCore.DbContextScope;
 
-namespace DbContextScopeTests.Demo.BusinessLogicServices
+namespace DbContextScope.Tests.Demo.BusinessLogicServices
 {
   public class UserCreditScoreService
   {

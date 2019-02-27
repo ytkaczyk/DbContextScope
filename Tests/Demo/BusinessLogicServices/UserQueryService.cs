@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using DbContextScopeTests.Demo.DatabaseContext;
-using DbContextScopeTests.Demo.DomainModel;
-using DbContextScopeTests.Demo.Repositories;
+using DbContextScope.Tests.Demo.DatabaseContext;
+using DbContextScope.Tests.Demo.DomainModel;
+using DbContextScope.Tests.Demo.Repositories;
 using EntityFrameworkCore.DbContextScope;
 
-namespace DbContextScopeTests.Demo.BusinessLogicServices
+namespace DbContextScope.Tests.Demo.BusinessLogicServices
 {
   /*
    * Example business logic service implementing query functionalities (i.e. read actions).
