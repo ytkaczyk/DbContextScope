@@ -136,6 +136,180 @@ namespace DbContextScope.Tests
     }
 
     [TestMethod]
+    public void Add_entity_should_call_refresh_entities_in_parent_scope()
+    {
+      // arrange
+      var counter = new CallCounter();
+      var dummyDbContext = counter.Open<DummyDbContext>();
+      dummyDbContext.DummyEntities.Add(new DummyEntity());
+
+      // act
+      var changes = dummyDbContext.SaveChanges();
+
+      // assert
+      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScope(IEnumerable)"), counter.ReportCalledMethods());
+      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "SaveChanges"), counter.ReportCalledMethods());
+    }
+
+    [TestMethod]
+    public void Update_entity_should_call_refresh_entities_in_parent_scope()
+    {
+      // arrange
+      var baseDummyDbContext = new DummyDbContext();
+      var dummyEntity = new DummyEntity { Name = "Bob" };
+      baseDummyDbContext.DummyEntities.Add(dummyEntity);
+      baseDummyDbContext.SaveChanges();
+
+      var counter = new CallCounter();
+      var dummyDbContext = counter.Open<DummyDbContext>();
+      dummyDbContext.ChangeTracker.Tracked += (sender, args) => Console.WriteLine("Tracked: " + args.Entry.GetType());
+      dummyDbContext.ChangeTracker.StateChanged += (sender, args) => Console.WriteLine("StateChanged: " + args.Entry.GetType());
+      var savedDummyEntity = dummyDbContext.DummyEntities.Find(dummyEntity.Id);
+      savedDummyEntity.Name = "Alice";
+
+      // act
+      var changes = dummyDbContext.SaveChanges();
+
+      // assert
+      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScope(IEnumerable)"), counter.ReportCalledMethods());
+      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "SaveChanges"), counter.ReportCalledMethods());
+    }
+
+    [TestMethod]
+    public async Task Add_entity_should_call_refresh_entities_async_in_parent_scope()
+    {
+      // arrange
+      var counter = new CallCounter();
+      var dummyDbContext = counter.Open<DummyDbContext>();
+      dummyDbContext.Add(new DummyEntity());
+
+      // act
+      var changes = await dummyDbContext.SaveChangesAsync();
+
+      // assert
+      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScopeAsync(IEnumerable)"), counter.ReportCalledMethods());
+      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "SaveChangesAsync(CancellationToken)"), counter.ReportCalledMethods());
+    }
+
+    [TestMethod]
+    public async Task Update_entity_should_call_refresh_entities_async_in_parent_scope()
+    {
+      // arrange
+      var baseDummyDbContext = new DummyDbContext();
+      var dummyEntity = new DummyEntity { Name = "Bob" };
+      await baseDummyDbContext.DummyEntities.AddAsync(dummyEntity);
+      await baseDummyDbContext.SaveChangesAsync();
+
+      var counter = new CallCounter();
+      var dummyDbContext = counter.Open<DummyDbContext>();
+      dummyDbContext.ChangeTracker.Tracked += (sender, args) => Console.WriteLine("Tracked: " + args.Entry.GetType());
+      dummyDbContext.ChangeTracker.StateChanged += (sender, args) => Console.WriteLine("StateChanged: " + args.Entry.GetType());
+      var savedDummyEntity = await dummyDbContext.DummyEntities.FindAsync(dummyEntity.Id);
+      savedDummyEntity.Name = "Alice";
+
+      // act
+      var changes = await dummyDbContext.SaveChangesAsync();
+
+      // assert
+      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScopeAsync(IEnumerable)"), counter.ReportCalledMethods());
+      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "SaveChangesAsync(CancellationToken)"), counter.ReportCalledMethods());
+    }
+
+    [TestMethod]
+    public void OpenReadOnly_should_create_a_proxy()
+    {
+      // arrange
+      var counter = new CallCounter();
+
+      // act
+      var dummyDbContext = counter.OpenReadOnly<BlockingDummyDbContext>();
+
+      // assert
+      var dummyDbContextTypeName = dummyDbContext.GetType().Name;
+      StringAssert.StartsWith(dummyDbContextTypeName, "BlockingDummyDbContextProxy");
+    }
+    
+    [TestMethod]
+    public void ReadOnly_Dispose_of_proxy_should_be_forwarded()
+    {
+      // arrange
+      var counter = new CallCounter();
+      var dummyDbContext = counter.OpenReadOnly<BlockingDummyDbContext>();
+
+      // act
+      dummyDbContext.Dispose();
+
+      // assert
+      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "Dispose"), counter.ReportCalledMethods());
+    }
+
+    [TestMethod]
+    public void ReadOnly_SaveChanges_of_proxy_should_be_blocked()
+    {
+      // arrange
+      var counter = new CallCounter();
+      var dummyDbContext = counter.OpenReadOnly<BlockingDummyDbContext>();
+      
+      // act / assert
+      Assert.ThrowsException<InvalidOperationException>(() => dummyDbContext.SaveChanges());
+    }
+
+    [TestMethod]
+    public void ReadOnly_SaveChanges_with_bool_of_proxy_should_be_blocked()
+    {
+      // arrange
+      var counter = new CallCounter();
+      var dummyDbContext = counter.OpenReadOnly<BlockingDummyDbContext>();
+      
+      // act / assert
+      Assert.ThrowsException<InvalidOperationException>(() => dummyDbContext.SaveChanges(true));
+    }
+
+    [TestMethod]
+    public async Task ReadOnly_SaveChangesAsync_of_proxy_should_be_blocked()
+    {
+      // arrange
+      var counter = new CallCounter();
+      var dummyDbContext = counter.OpenReadOnly<BlockingDummyDbContext>();
+
+      // act / assert
+      await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => dummyDbContext.SaveChangesAsync());
+    }
+
+    [TestMethod]
+    public async Task ReadOnly_SaveChangesAsync_with_bool_of_proxy_should_be_blocked()
+    {
+      // arrange
+      var counter = new CallCounter();
+      var dummyDbContext = counter.OpenReadOnly<BlockingDummyDbContext>();
+
+      // act / assert
+      await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => dummyDbContext.SaveChangesAsync(true));
+    }
+
+    [TestMethod]
+    public async Task ReadOnly_SaveChangesAsync_with_cancellationToken_of_proxy_should_be_blocked()
+    {
+      // arrange
+      var counter = new CallCounter();
+      var dummyDbContext = counter.OpenReadOnly<BlockingDummyDbContext>();
+
+      // act / assert
+      await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => dummyDbContext.SaveChangesAsync(new CancellationToken(false)));
+    }
+
+    [TestMethod]
+    public async Task ReadOnly_SaveChangesAsync_with_bool_and_cancellationToken_of_proxy_should_be_blocked()
+    {
+      // arrange
+      var counter = new CallCounter();
+      var dummyDbContext = counter.OpenReadOnly<BlockingDummyDbContext>();
+
+      // act / assert
+      await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => dummyDbContext.SaveChangesAsync(true, new CancellationToken(false)));
+    }
+
+    [TestMethod]
     public void DummyContext_should_save_an_entity()
     {
       // arrange
@@ -171,86 +345,6 @@ namespace DbContextScope.Tests
       dummyDbContext = new DummyDbContext();
       savedDummyEntity = dummyDbContext.DummyEntities.Find(dummyEntity.Id);
       Assert.AreEqual("Alice", savedDummyEntity.Name);
-    }
-
-    [TestMethod]
-    public void Add_entity_should_call_refesh_entities_in_parent_scope()
-    {
-      // arrange
-      var counter = new CallCounter();
-      var dummyDbContext = counter.Open<DummyDbContext>();
-      dummyDbContext.DummyEntities.Add(new DummyEntity());
-
-      // act
-      var changes = dummyDbContext.SaveChanges();
-
-      // assert
-      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScope(IEnumerable)"), counter.ReportCalledMethods());
-      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "SaveChanges"), counter.ReportCalledMethods());
-    }
-
-    [TestMethod]
-    public void Update_entity_should_call_refesh_entities_in_parent_scope()
-    {
-      // arrange
-      var baseDummyDbContext = new DummyDbContext();
-      var dummyEntity = new DummyEntity { Name = "Bob" };
-      baseDummyDbContext.DummyEntities.Add(dummyEntity);
-      baseDummyDbContext.SaveChanges();
-
-      var counter = new CallCounter();
-      var dummyDbContext = counter.Open<DummyDbContext>();
-      dummyDbContext.ChangeTracker.Tracked += (sender, args) => Console.WriteLine("Tracked: " + args.Entry.GetType());
-      dummyDbContext.ChangeTracker.StateChanged += (sender, args) => Console.WriteLine("StateChanged: " + args.Entry.GetType());
-      var savedDummyEntity = dummyDbContext.DummyEntities.Find(dummyEntity.Id);
-      savedDummyEntity.Name = "Alice";
-
-      // act
-      var changes = dummyDbContext.SaveChanges();
-
-      // assert
-      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScope(IEnumerable)"), counter.ReportCalledMethods());
-      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "SaveChanges"), counter.ReportCalledMethods());
-    }
-
-    [TestMethod]
-    public async Task Add_entity_should_call_refesh_entities_async_in_parent_scope()
-    {
-      // arrange
-      var counter = new CallCounter();
-      var dummyDbContext = counter.Open<DummyDbContext>();
-      dummyDbContext.Add(new DummyEntity());
-
-      // act
-      var changes = await dummyDbContext.SaveChangesAsync();
-
-      // assert
-      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScopeAsync(IEnumerable)"), counter.ReportCalledMethods());
-      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "SaveChangesAsync(CancellationToken)"), counter.ReportCalledMethods());
-    }
-
-    [TestMethod]
-    public async Task Update_entity_should_call_refesh_entities_async_in_parent_scope()
-    {
-      // arrange
-      var baseDummyDbContext = new DummyDbContext();
-      var dummyEntity = new DummyEntity { Name = "Bob" };
-      await baseDummyDbContext.DummyEntities.AddAsync(dummyEntity);
-      await baseDummyDbContext.SaveChangesAsync();
-
-      var counter = new CallCounter();
-      var dummyDbContext = counter.Open<DummyDbContext>();
-      dummyDbContext.ChangeTracker.Tracked += (sender, args) => Console.WriteLine("Tracked: " + args.Entry.GetType());
-      dummyDbContext.ChangeTracker.StateChanged += (sender, args) => Console.WriteLine("StateChanged: " + args.Entry.GetType());
-      var savedDummyEntity = await dummyDbContext.DummyEntities.FindAsync(dummyEntity.Id);
-      savedDummyEntity.Name = "Alice";
-
-      // act
-      var changes = await dummyDbContext.SaveChangesAsync();
-
-      // assert
-      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScopeAsync(IEnumerable)"), counter.ReportCalledMethods());
-      Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "SaveChangesAsync(CancellationToken)"), counter.ReportCalledMethods());
     }
 
     #region CUT
