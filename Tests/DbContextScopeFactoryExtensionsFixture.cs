@@ -359,7 +359,6 @@ namespace DbContextScope.Tests
         base.OnConfiguring(optionsBuilder);
 
         optionsBuilder.UseInMemoryDatabase("STATIC_DummyDbContext", GlobalDbRoot);
-        //optionsBuilder.UseInMemoryDatabase($"DummyDbContext_{Guid.NewGuid()}");
       }
 
       protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -372,7 +371,7 @@ namespace DbContextScope.Tests
 
     public class DummyEntity
     {
-      public int Id { get; set; }
+      public Guid Id { get; set; }
       public string Name { get; set; }
     }
 
