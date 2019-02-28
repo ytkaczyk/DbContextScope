@@ -7,7 +7,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
   {
     private readonly DbContextScope _internalScope;
 
-    public DbContextReadOnlyScope(DbContextScopeOption joiningOption, IsolationLevel? isolationLevel, IAmbientDbContextFactory ambientDbContextFactory = null)
+    public DbContextReadOnlyScope(DbContextScopeOption joiningOption, IsolationLevel? isolationLevel, IAmbientDbContextFactory ambientDbContextFactory)
     {
       _internalScope = new DbContextScope(joiningOption, true, isolationLevel, ambientDbContextFactory);
     }

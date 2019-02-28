@@ -4,10 +4,10 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using DbContextScope.Tests.DatabaseContext;
-using DbContextScope.Tests.Demo.Repositories;
+using DbContextScope.Tests.DemoWithOpen.Repositories;
 using EntityFrameworkCore.DbContextScope;
 
-namespace DbContextScope.Tests.Demo.BusinessLogicServices
+namespace DbContextScope.Tests.DemoWithOpen.BusinessLogicServices
 {
   /*
    * Example business logic service implementing query functionalities (i.e. read actions).

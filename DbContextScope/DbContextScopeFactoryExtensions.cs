@@ -107,7 +107,7 @@ namespace EntityFrameworkCore.DbContextScope
 
       if (!tracking)
       {
-        proxy.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
       }
 
       return proxy;

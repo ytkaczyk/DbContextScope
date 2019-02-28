@@ -29,7 +29,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
     private bool _completed;
     private bool _disposed;
 
-    public DbContextCollection(bool readOnly = false, IsolationLevel? isolationLevel = null, IAmbientDbContextFactory ambientDbContextFactory = null)
+    public DbContextCollection(IAmbientDbContextFactory ambientDbContextFactory, bool readOnly = false, IsolationLevel? isolationLevel = null)
     {
       _disposed = false;
       _completed = false;
@@ -44,7 +44,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
 
     internal Dictionary<Type, DbContext> InitializedDbContexts { get; }
 
-    public TDbContext Get<TDbContext>() where TDbContext : DbContext
+    public TDbContext GetOrCreate<TDbContext>() where TDbContext : DbContext
     {
       if (_disposed)
       {
@@ -57,9 +57,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       {
         // First time we've been asked for this particular DbContext type.
         // Create one, cache it and start its database transaction if needed.
-        var dbContext = _ambientDbContextFactory != null
-          ? _ambientDbContextFactory.CreateDbContext<TDbContext>()
-          : Activator.CreateInstance<TDbContext>();
+        var dbContext = _ambientDbContextFactory.CreateDbContext<TDbContext>();
 
         InitializedDbContexts.Add(requestedType, dbContext);
 

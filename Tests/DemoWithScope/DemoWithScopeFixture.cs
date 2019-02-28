@@ -2,17 +2,17 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DbContextScope.Tests.DatabaseContext;
-using DbContextScope.Tests.Demo.BusinessLogicServices;
-using DbContextScope.Tests.Demo.CommandModel;
-using DbContextScope.Tests.Demo.Repositories;
+using DbContextScope.Tests.DemoWithScope.BusinessLogicServices;
+using DbContextScope.Tests.DemoWithScope.CommandModel;
+using DbContextScope.Tests.DemoWithScope.Repositories;
 using EntityFrameworkCore.DbContextScope;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DbContextScope.Tests.Demo
+namespace DbContextScope.Tests.DemoWithScope
 {
   [TestClass]
-  public class DemoFixture : FixtureBase
+  public class DemoWithScopeFixture : FixtureBase
   {
     protected override void OnTestSetup(ServiceCollection services)
     {

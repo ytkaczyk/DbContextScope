@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using DbContextScope.Tests.DatabaseContext;
 using EntityFrameworkCore.DbContextScope;
 
-namespace DbContextScope.Tests.Demo.Repositories
+namespace DbContextScope.Tests.DemoWithScope.Repositories
 {
   /*
    * An example "repository" relying on an ambient DbContext instance.

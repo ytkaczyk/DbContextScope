@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using DbContextScope.Tests.DatabaseContext;
 
-namespace DbContextScope.Tests.Demo.Repositories
+namespace DbContextScope.Tests.DemoWithOpen.Repositories
 {
   public interface IUserRepository
   {

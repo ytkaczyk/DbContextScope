@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using DbContextScope.Tests.DatabaseContext;
 using EntityFrameworkCore.DbContextScope;
 
-namespace DbContextScope.Tests.Demo.BusinessLogicServices
+namespace DbContextScope.Tests.DemoWithOpen.BusinessLogicServices
 {
   public class UserCreditScoreService
   {

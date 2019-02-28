@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DbContextScope.Tests.DatabaseContext;
 using EntityFrameworkCore.DbContextScope;
 
-namespace DbContextScope.Tests.Demo.BusinessLogicServices
+namespace DbContextScope.Tests.DemoWithOpen.BusinessLogicServices
 {
   public class UserEmailService
   {

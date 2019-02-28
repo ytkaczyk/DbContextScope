@@ -7,7 +7,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
   {
     private readonly IAmbientDbContextFactory _ambientDbContextFactory;
 
-    public DbContextScopeFactory(IAmbientDbContextFactory ambientDbContextFactory = null)
+    public DbContextScopeFactory(IAmbientDbContextFactory ambientDbContextFactory)
     {
       _ambientDbContextFactory = ambientDbContextFactory;
     }
