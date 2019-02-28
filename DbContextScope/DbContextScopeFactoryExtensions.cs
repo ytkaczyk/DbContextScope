@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using EntityFrameworkCore.DbContextScope.Implementations;
 using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.DbContextScope
@@ -12,6 +13,8 @@ namespace EntityFrameworkCore.DbContextScope
      * CreateReadOnly(DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting)
      * CreateWithTransaction(IsolationLevel isolationLevel)
      * CreateReadOnlyWithTransaction(IsolationLevel isolationLevel)
+     *
+     * readonly: ((DbContext)invocation.InvocationTarget).ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking
      */
     public static TDbContext Create<TDbContext>(this IDbContextScopeFactory self, DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting) where TDbContext : DbContext
     {

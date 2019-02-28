@@ -183,7 +183,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       }
     }
 
-    public async Task RefreshEntitiesInParentScopeAsync(IEnumerable entities)
+    public async Task RefreshEntitiesInParentScopeAsync(IEnumerable entities, CancellationToken cancellationToken = default(CancellationToken))
     {
       // See comments in the sync version of this method for an explanation of what we're doing here.
 
@@ -216,7 +216,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         var refreshStrategy = getRefreshStrategy(contextInCurrentScope, correspondingParentContext);
         foreach (var toRefresh in entitiesToRefresh)
         {
-          await refreshStrategy.RefreshAsync(toRefresh);
+          await refreshStrategy.RefreshAsync(toRefresh, cancellationToken);
         }
       }
     }

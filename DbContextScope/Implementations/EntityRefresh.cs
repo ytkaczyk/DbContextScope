@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
@@ -33,7 +34,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       }
     }
 
-    public async Task RefreshAsync<TEntity>(TEntity toRefresh)
+    public async Task RefreshAsync<TEntity>(TEntity toRefresh, CancellationToken cancellationToken = default(CancellationToken))
     {
       var stateInCurrentScope = getStateInCurrentScope(toRefresh);
       if (stateInCurrentScope != null)
@@ -43,7 +44,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         {
           if (shouldRefresh(stateInParentScope))
           {
-            await _correspondingParentContext.Entry(stateInParentScope.Entity).ReloadAsync();
+            await _correspondingParentContext.Entry(stateInParentScope.Entity).ReloadAsync(cancellationToken);
           }
         }
       }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace EntityFrameworkCore.DbContextScope
 {
@@ -6,6 +7,6 @@ namespace EntityFrameworkCore.DbContextScope
   {
     void Refresh<TEntity>(TEntity toRefresh);
 
-    Task RefreshAsync<TEntity>(TEntity toRefresh);
+    Task RefreshAsync<TEntity>(TEntity toRefresh, CancellationToken cancellationToken = default(CancellationToken));
   }
 }

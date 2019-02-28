@@ -71,6 +71,6 @@ namespace EntityFrameworkCore.DbContextScope
     /// (this is a pretty advanced feature that should be used
     /// with parsimony).
     /// </summary>
-    Task RefreshEntitiesInParentScopeAsync(IEnumerable entities);
+    Task RefreshEntitiesInParentScopeAsync(IEnumerable entities, CancellationToken cancellationToken = default(CancellationToken));
   }
 }
