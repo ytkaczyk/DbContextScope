@@ -19,7 +19,7 @@ namespace DbContextScope.Demo
         return new UserManagementDbContext(config.Options) as TDbContext;
       }
 
-      throw new NotImplementedException(typeof(TDbContext).Name);
+      throw new ArgumentOutOfRangeException(typeof(TDbContext).Name);
     }
   }
 }

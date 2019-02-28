@@ -16,13 +16,13 @@ namespace DbContextScope.Tests
   public class DbContextScopeFactoryExtensionsFixture
   {
     [TestMethod]
-    public void Create_should_create_a_proxy()
+    public void Open_should_create_a_proxy()
     {
       // arrange
       var counter = new CallCounter();
 
       // act
-      var dummyDbContext = counter.Create<BlockingDummyDbContext>();
+      var dummyDbContext = counter.Open<BlockingDummyDbContext>();
 
       // assert
       var dummyDbContextTypeName = dummyDbContext.GetType().Name;
@@ -34,7 +34,7 @@ namespace DbContextScope.Tests
     {
       // arrange
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<BlockingDummyDbContext>();
+      var dummyDbContext = counter.Open<BlockingDummyDbContext>();
 
       // act
       dummyDbContext.Dispose();
@@ -48,7 +48,7 @@ namespace DbContextScope.Tests
     {
       // arrange
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<BlockingDummyDbContext>();
+      var dummyDbContext = counter.Open<BlockingDummyDbContext>();
 
       // act
       var changes = dummyDbContext.SaveChanges();
@@ -63,7 +63,7 @@ namespace DbContextScope.Tests
     {
       // arrange
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<BlockingDummyDbContext>();
+      var dummyDbContext = counter.Open<BlockingDummyDbContext>();
 
       // act
       var changes = dummyDbContext.SaveChanges(true);
@@ -78,7 +78,7 @@ namespace DbContextScope.Tests
     {
       // arrange
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<BlockingDummyDbContext>();
+      var dummyDbContext = counter.Open<BlockingDummyDbContext>();
 
       // act
       var changes = await dummyDbContext.SaveChangesAsync();
@@ -94,7 +94,7 @@ namespace DbContextScope.Tests
     {
       // arrange
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<BlockingDummyDbContext>();
+      var dummyDbContext = counter.Open<BlockingDummyDbContext>();
 
       // act
       var changes = await dummyDbContext.SaveChangesAsync(true);
@@ -110,7 +110,7 @@ namespace DbContextScope.Tests
     {
       // arrange
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<BlockingDummyDbContext>();
+      var dummyDbContext = counter.Open<BlockingDummyDbContext>();
 
       // act
       var changes = await dummyDbContext.SaveChangesAsync(new CancellationToken(false));
@@ -125,7 +125,7 @@ namespace DbContextScope.Tests
     {
       // arrange
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<BlockingDummyDbContext>();
+      var dummyDbContext = counter.Open<BlockingDummyDbContext>();
 
       // act
       var changes = await dummyDbContext.SaveChangesAsync(true, new CancellationToken(false));
@@ -178,7 +178,7 @@ namespace DbContextScope.Tests
     {
       // arrange
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<DummyDbContext>();
+      var dummyDbContext = counter.Open<DummyDbContext>();
       dummyDbContext.DummyEntities.Add(new DummyEntity());
 
       // act
@@ -199,7 +199,7 @@ namespace DbContextScope.Tests
       baseDummyDbContext.SaveChanges();
 
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<DummyDbContext>();
+      var dummyDbContext = counter.Open<DummyDbContext>();
       dummyDbContext.ChangeTracker.Tracked += (sender, args) => Console.WriteLine("Tracked: " + args.Entry.GetType());
       dummyDbContext.ChangeTracker.StateChanged += (sender, args) => Console.WriteLine("StateChanged: " + args.Entry.GetType());
       var savedDummyEntity = dummyDbContext.DummyEntities.Find(dummyEntity.Id);
@@ -218,7 +218,7 @@ namespace DbContextScope.Tests
     {
       // arrange
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<DummyDbContext>();
+      var dummyDbContext = counter.Open<DummyDbContext>();
       dummyDbContext.Add(new DummyEntity());
 
       // act
@@ -239,7 +239,7 @@ namespace DbContextScope.Tests
       await baseDummyDbContext.SaveChangesAsync();
 
       var counter = new CallCounter();
-      var dummyDbContext = counter.Create<DummyDbContext>();
+      var dummyDbContext = counter.Open<DummyDbContext>();
       dummyDbContext.ChangeTracker.Tracked += (sender, args) => Console.WriteLine("Tracked: " + args.Entry.GetType());
       dummyDbContext.ChangeTracker.StateChanged += (sender, args) => Console.WriteLine("StateChanged: " + args.Entry.GetType());
       var savedDummyEntity = await dummyDbContext.DummyEntities.FindAsync(dummyEntity.Id);
@@ -252,6 +252,8 @@ namespace DbContextScope.Tests
       Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScopeAsync(IEnumerable)"), counter.ReportCalledMethods());
       Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "SaveChangesAsync(CancellationToken)"), counter.ReportCalledMethods());
     }
+
+    #region CUT
 
     private class CallCounter : IDbContextScopeFactory, IDbContextScope
     {
@@ -401,5 +403,7 @@ namespace DbContextScope.Tests
         throw new AssertFailedException("Dispose() is not allowed to be called yet a proxy should intercept it.");
       }
     }
+    
+    #endregion
   }
 }

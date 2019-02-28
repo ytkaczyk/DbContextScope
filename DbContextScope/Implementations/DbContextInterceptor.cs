@@ -41,12 +41,12 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         return;
       }
 
-      throw new NotImplementedException($"The method '{nameof(DbContext)}.{invocation.Method.Name}' was not chosen to be proxied!");
+      throw new ArgumentOutOfRangeException($"The method '{nameof(DbContext)}.{invocation.Method.Name}' was not chosen to be proxied!");
     }
 
     void IAsyncInterceptor.InterceptAsynchronous(IInvocation invocation)
     {
-      throw new NotImplementedException($"The async method '{nameof(DbContext)}.{invocation.Method.Name}' was not chosen to be proxied!");
+      throw new ArgumentOutOfRangeException($"The async method '{nameof(DbContext)}.{invocation.Method.Name}' was not chosen to be proxied!");
     }
 
     void IAsyncInterceptor.InterceptAsynchronous<TResult>(IInvocation invocation)
@@ -74,7 +74,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         return;
       }
 
-      throw new NotImplementedException($"The async method '{nameof(DbContext)}.{invocation.Method.Name}' was not chosen to be proxied!");
+      throw new ArgumentOutOfRangeException($"The async method '{nameof(DbContext)}.{invocation.Method.Name}' was not chosen to be proxied!");
     }
 
     private async Task<int> saveChangesAndUpdateParentScopeAsync(DetectModifiedEntitiesAndUpdateParentScope parentUpdater, CancellationToken cancellationToken = default(CancellationToken))

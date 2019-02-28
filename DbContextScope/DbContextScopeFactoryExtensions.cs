@@ -16,7 +16,7 @@ namespace EntityFrameworkCore.DbContextScope
      *
      * readonly: ((DbContext)invocation.InvocationTarget).ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking
      */
-    public static TDbContext Create<TDbContext>(this IDbContextScopeFactory self, DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting) where TDbContext : DbContext
+    public static TDbContext Open<TDbContext>(this IDbContextScopeFactory self, DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting) where TDbContext : DbContext
     {
       /*
        * 1. create DbContextScope
