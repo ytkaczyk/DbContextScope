@@ -5,9 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DbContextScope.Tests.DatabaseContext;
 using EntityFrameworkCore.DbContextScope;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DbContextScope.Tests
@@ -144,7 +143,7 @@ namespace DbContextScope.Tests
       dummyDbContext.DummyEntities.Add(new DummyEntity());
 
       // act
-      var changes = dummyDbContext.SaveChanges();
+      dummyDbContext.SaveChanges();
 
       // assert
       Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScope(IEnumerable)"), counter.ReportCalledMethods());
@@ -168,7 +167,7 @@ namespace DbContextScope.Tests
       savedDummyEntity.Name = "Alice";
 
       // act
-      var changes = dummyDbContext.SaveChanges();
+      dummyDbContext.SaveChanges();
 
       // assert
       Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScope(IEnumerable)"), counter.ReportCalledMethods());
@@ -184,7 +183,7 @@ namespace DbContextScope.Tests
       dummyDbContext.Add(new DummyEntity());
 
       // act
-      var changes = await dummyDbContext.SaveChangesAsync();
+      await dummyDbContext.SaveChangesAsync();
 
       // assert
       Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScopeAsync(IEnumerable)"), counter.ReportCalledMethods());
@@ -208,7 +207,7 @@ namespace DbContextScope.Tests
       savedDummyEntity.Name = "Alice";
 
       // act
-      var changes = await dummyDbContext.SaveChangesAsync();
+      await dummyDbContext.SaveChangesAsync();
 
       // assert
       Assert.AreEqual(1, counter.CalledMethods.Count(cm => cm == "RefreshEntitiesInParentScopeAsync(IEnumerable)"), counter.ReportCalledMethods());
@@ -434,66 +433,6 @@ namespace DbContextScope.Tests
         }
 
         throw new NotSupportedException($"DbContext of type '{typeof(TDbContext)}' was unexpected at this point.");
-      }
-    }
-
-    public class DummyDbContext : DbContext
-    {
-      public DummyDbContext()
-      {
-        
-      }
-
-      public static InMemoryDatabaseRoot GlobalDbRoot = new InMemoryDatabaseRoot();
-
-      public DbSet<DummyEntity> DummyEntities { get; set; }
-
-      protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-      {
-        base.OnConfiguring(optionsBuilder);
-
-        optionsBuilder.UseInMemoryDatabase("STATIC_DummyDbContext", GlobalDbRoot);
-      }
-
-      protected override void OnModelCreating(ModelBuilder modelBuilder)
-      {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<DummyEntity>();
-      }
-    }
-
-    public class DummyEntity
-    {
-      public Guid Id { get; set; }
-      public string Name { get; set; }
-    }
-
-    public class BlockingDummyDbContext : DummyDbContext
-    {
-      public override int SaveChanges()
-      {
-        throw new AssertFailedException("SaveChanges() is not allowed to be called yet a proxy should intercept it.");
-      }
-
-      public override int SaveChanges(bool acceptAllChangesOnSuccess)
-      {
-        throw new AssertFailedException("SaveChanges(bool acceptAllChangesOnSuccess) is not allowed to be called yet a proxy should intercept it.");
-      }
-
-      public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
-      {
-        throw new AssertFailedException("SaveChangesAsync(CancellationToken cancellationToken) is not allowed to be called yet a proxy should intercept it.");
-      }
-
-      public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = new CancellationToken())
-      {
-        throw new AssertFailedException("SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken) is not allowed to be called yet a proxy should intercept it.");
-      }
-
-      public override void Dispose()
-      {
-        throw new AssertFailedException("Dispose() is not allowed to be called yet a proxy should intercept it.");
       }
     }
     
