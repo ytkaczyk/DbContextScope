@@ -7,7 +7,10 @@ namespace DbContextScope.Tests.DatabaseContext
   {
     public DummyDbContext()
     {
-        
+    }
+
+    public DummyDbContext(DbContextOptions options) : base(options)
+    {
     }
 
     public static InMemoryDatabaseRoot GlobalDbRoot = new InMemoryDatabaseRoot();
@@ -16,15 +19,16 @@ namespace DbContextScope.Tests.DatabaseContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      base.OnConfiguring(optionsBuilder);
+      if (optionsBuilder.IsConfigured)
+      {
+        return;
+      }
 
       optionsBuilder.UseInMemoryDatabase("STATIC_DummyDbContext", GlobalDbRoot);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-      base.OnModelCreating(modelBuilder);
-
       modelBuilder.Entity<DummyEntity>();
     }
   }

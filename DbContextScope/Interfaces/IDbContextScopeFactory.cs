@@ -9,6 +9,8 @@ namespace EntityFrameworkCore.DbContextScope
   /// </summary>
   public interface IDbContextScopeFactory
   {
+    // TODO: hide Create* with an internal interface or at least with an "advanced" interface as service
+
     /// <summary>
     /// Creates a new DbContextScope.
     /// By default, the new scope will join the existing ambient scope. This
