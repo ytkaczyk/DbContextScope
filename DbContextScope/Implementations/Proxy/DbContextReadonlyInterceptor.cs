@@ -6,16 +6,9 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
 {
   internal class DbContextReadonlyInterceptor : DbContextInterceptorBase
   {
-    private readonly IDbContextReadOnlyScope _dbContextScope;
-
-    public DbContextReadonlyInterceptor(IDbContextReadOnlyScope dbContextScope)
-    {
-      _dbContextScope = dbContextScope;
-    }
-
     protected override void OnHandleDispose(IInvocation invocation)
     {
-      _dbContextScope.Dispose();
+      CurrentDbContextScope.Dispose();
     }
 
     protected override int OnHandleSaveChanges(IInvocation invocation)

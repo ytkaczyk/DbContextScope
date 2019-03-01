@@ -34,7 +34,7 @@ namespace DbContextScope.Tests
       Assert.IsTrue(object.ReferenceEquals(dbContext1, dbContext2), "The db context was created more than once.");
     }
 
-    [TestMethod]  
+    [TestMethod]
     public void ProxyTypeName_shoud_stay_the_same()
     {
       // arrange
@@ -67,7 +67,7 @@ namespace DbContextScope.Tests
       {
         var dbContext = scope.Get<DummyDbContext>();
         dbContext.Add(entity);
-        
+
         scope.SaveChanges();
       }
 

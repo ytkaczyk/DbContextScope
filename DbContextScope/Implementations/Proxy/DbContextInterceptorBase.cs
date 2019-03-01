@@ -10,6 +10,8 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
 {
   internal abstract class DbContextInterceptorBase : IAsyncInterceptor, IProxyGenerationHook
   {
+    protected DbContextScope CurrentDbContextScope => AmbientContextScopeMagic.GetAmbientScope();
+
     protected virtual void HandleSaveChanges(IInvocation invocation)
     {
       if (CallContext.IsInScope("BypassSaveChanges"))

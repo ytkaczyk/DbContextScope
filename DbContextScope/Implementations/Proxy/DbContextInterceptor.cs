@@ -7,24 +7,18 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
 {
   internal class DbContextInterceptor : DbContextInterceptorBase
   {
-    private readonly IDbContextScope _dbContextScope;
-
-    public DbContextInterceptor(IDbContextScope dbContextScope)
-    {
-      _dbContextScope = dbContextScope;
-    }
 
     protected override void OnHandleDispose(IInvocation invocation)
     {
-      _dbContextScope.Dispose();
+      CurrentDbContextScope.Dispose();
     }
 
     protected override int OnHandleSaveChanges(IInvocation invocation)
     {
       var dbContext = (DbContext)invocation.Proxy;
-      var parentUpdater = new DetectModifiedEntitiesAndUpdateParentScope(dbContext, _dbContextScope);
+      var parentUpdater = new DetectModifiedEntitiesAndUpdateParentScope(dbContext, CurrentDbContextScope);
 
-      var changes = _dbContextScope.SaveChanges();
+      var changes = CurrentDbContextScope.SaveChanges();
       parentUpdater.UpdateParent();
 
       return changes;
@@ -33,7 +27,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
     protected override Task<int> OnHandleSaveChangesAsync(IInvocation invocation)
     {
       var dbContext = (DbContext)invocation.Proxy;
-      var parentUpdater = new DetectModifiedEntitiesAndUpdateParentScope(dbContext, _dbContextScope);
+      var parentUpdater = new DetectModifiedEntitiesAndUpdateParentScope(dbContext, CurrentDbContextScope);
 
       Task<int> returnValue;
 
@@ -52,7 +46,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
 
     private async Task<int> saveChangesAndUpdateParentScopeAsync(DetectModifiedEntitiesAndUpdateParentScope parentUpdater, CancellationToken cancellationToken = default(CancellationToken))
     {
-      var changes = await _dbContextScope.SaveChangesAsync(cancellationToken);
+      var changes = await CurrentDbContextScope.SaveChangesAsync(cancellationToken);
       await parentUpdater.UpdateParentAsync(cancellationToken);
 
       return changes;

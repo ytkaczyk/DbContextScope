@@ -8,6 +8,8 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
   {
     private static readonly ProxyGenerator proxyGenerator = new ProxyGenerator();
     private readonly IAmbientDbContextArgumentFactory _ambientDbContextArgumentFactory;
+    private readonly DbContextInterceptorBase _dbContextReadOnlyInterceptor = new DbContextReadonlyInterceptor();
+    private readonly DbContextInterceptorBase _dbContextInterceptor = new DbContextInterceptor();
 
     public ProxyAmbientDbContextFactory(IAmbientDbContextArgumentFactory ambientDbContextArgumentFactory)
     {
@@ -16,15 +18,9 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
 
     public TDbContext CreateDbContext<TDbContext>(IDbContextScope dbContextScope, bool readOnly) where TDbContext : DbContext
     {
-      DbContextInterceptorBase interceptor;
-      if (readOnly)
-      {
-        interceptor = new DbContextReadonlyInterceptor(dbContextScope);
-      }
-      else
-      {
-        interceptor = new DbContextInterceptor(dbContextScope);
-      }
+      var interceptor = readOnly
+        ? _dbContextReadOnlyInterceptor
+        : _dbContextInterceptor;
 
       var proxyGenerationOptions = new ProxyGenerationOptions(interceptor);
       var constructorArgs = _ambientDbContextArgumentFactory.CreateDbContextArguments<TDbContext>();
