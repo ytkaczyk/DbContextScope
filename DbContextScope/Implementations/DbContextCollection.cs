@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using EntityFrameworkCore.DbContextScope.Implementations.Proxy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
+using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
 
 namespace EntityFrameworkCore.DbContextScope.Implementations
 {
@@ -30,11 +31,13 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
     private readonly Dictionary<DbContext, IDbContextTransaction> _transactions;
     private bool _completed;
     private bool _disposed;
+    private ILogger<DbContextCollection> _logger;
 
-    public DbContextCollection(DbContextScope dbContextScope, IAmbientDbContextFactory ambientDbContextFactory, bool readOnly = false, IsolationLevel? isolationLevel = null)
+    public DbContextCollection(DbContextScope dbContextScope, IAmbientDbContextFactory ambientDbContextFactory, ILoggerFactory loggerFactory, bool readOnly, IsolationLevel? isolationLevel)
     {
       _disposed = false;
       _completed = false;
+      _logger = loggerFactory.CreateLogger<DbContextCollection>();
 
       InitializedDbContexts = new Dictionary<Type, (DbContext DbContext, IDbContextProxyBypass Proxy)>();
       _transactions = new Dictionary<DbContext, IDbContextTransaction>();
@@ -105,19 +108,21 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         }
         catch (Exception e)
         {
-          Debug.WriteLine(e);
+          _logger.LogError(e, "Error while disposing DbContextCollection.");
+          // TODO: throw exception?
         }
       }
 
-      foreach (var dbContext in InitializedDbContexts.Values)
+      foreach (var item in InitializedDbContexts)
       {
         try
         {
-          dbContext.Proxy.DisposeDirect();
+          item.Value.Proxy.DisposeDirect();
         }
         catch (Exception e)
         {
-          Debug.WriteLine(e);
+          _logger.LogError(e, $"Error while disposing DbContext '{item.Key.FullName}'.");
+          // TODO: throw exception?
         }
       }
 

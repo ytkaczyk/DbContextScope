@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,7 +54,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       else
       {
         _nested = false;
-        _dbContexts = new DbContextCollection(this, ambientDbContextFactory, readOnly, isolationLevel);
+        _dbContexts = new DbContextCollection(this, ambientDbContextFactory, loggerFactory, readOnly, isolationLevel);
       }
 
       AmbientContextScopeMagic.SetAmbientScope(this);
@@ -258,6 +257,8 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
             }
             else
             {
+              _logger.LogWarning("The read/write DbContextScope was disposed without calling SaveChanges/Async! Attempt to rollback the changes.");
+
               // Disposing a read/write scope before having called its SaveChanges() method
               // indicates that something went wrong and that all changes should be rolled-back.
               rollbackInternal();
@@ -265,7 +266,8 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
           }
           catch (Exception e)
           {
-            Debug.WriteLine(e);
+            _logger.LogError(e, "Error while disposing DbContextScope.");
+            // TODO: throw exception?
           }
 
           _completed = true;
@@ -334,12 +336,10 @@ Stack Trace:
 "
                       + Environment.StackTrace;
 
-          Debug.WriteLine(message);
+          throw new InvalidOperationException(message);
         }
-        else
-        {
-          AmbientContextScopeMagic.SetAmbientScope(_parentScope);
-        }
+
+        AmbientContextScopeMagic.SetAmbientScope(_parentScope);
       }
 
       _disposed = true;
