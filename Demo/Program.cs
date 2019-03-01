@@ -16,7 +16,7 @@ namespace DbContextScope.Demo
     {
       var services = new ServiceCollection();
       services.AddDbContextScope();
-      services.AddScoped<IAmbientDbContextFactory, MemoryAmbientDbContextFactory>();
+      services.AddScoped<IAmbientDbContextArgumentFactory, MemoryAmbientDbContextArgumentFactory>();
 
       services.AddScoped<IUserRepository, UserRepository>();
 

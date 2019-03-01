@@ -17,7 +17,47 @@ namespace DbContextScope.Tests
     }
 
     [TestMethod]
-    public void Write_user_should_work()
+    public void DbContext_proxy_should_only_be_built_once_in_same_scope()
+    {
+      // arrange
+      TestDbContext dbContext1;
+      TestDbContext dbContext2;
+
+      // act
+      using (var scope = DbContextScopeFactory.Create())
+      {
+        dbContext1 = scope.Get<TestDbContext>();
+        dbContext2 = scope.Get<TestDbContext>();
+      }
+
+      // assert
+      Assert.IsTrue(object.ReferenceEquals(dbContext1, dbContext2), "The db context was created more than once.");
+    }
+
+    [TestMethod]  
+    public void ProxyTypeName_shoud_stay_the_same()
+    {
+      // arrange
+      string dbContext1;
+      string dbContext2;
+
+      // act
+      using (var scope = DbContextScopeFactory.Create())
+      {
+        dbContext1 = scope.Get<DummyDbContext>().GetType().Name;
+      }
+
+      using (var scope = DbContextScopeFactory.Create())
+      {
+        dbContext2 = scope.Get<DummyDbContext>().GetType().Name;
+      }
+
+      // assert
+      Assert.AreEqual(dbContext1, dbContext2);
+    }
+
+    [TestMethod]
+    public void Write_user_via_scope_should_work()
     {
       // arrange
       var entity = new DummyEntity { Name = "Bob" };
@@ -27,6 +67,32 @@ namespace DbContextScope.Tests
       {
         var dbContext = scope.Get<DummyDbContext>();
         dbContext.Add(entity);
+        
+        scope.SaveChanges();
+      }
+
+      // assert
+      using (var scope = DbContextScopeFactory.CreateReadOnly())
+      {
+        var dbContext = scope.Get<DummyDbContext>();
+
+        var users = dbContext.DummyEntities.ToArray();
+        Assert.AreEqual(1, users.Length);
+      }
+    }
+
+    [TestMethod]
+    public void Write_user_via_dbContext_should_work()
+    {
+      // arrange
+      var entity = new DummyEntity { Name = "Bob" };
+
+      // act
+      using (var scope = DbContextScopeFactory.Create())
+      {
+        var dbContext = scope.Get<DummyDbContext>();
+        dbContext.Add(entity);
+
         dbContext.SaveChanges();
       }
 

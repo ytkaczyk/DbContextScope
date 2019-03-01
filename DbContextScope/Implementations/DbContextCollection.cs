@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
+using EntityFrameworkCore.DbContextScope.Implementations.Proxy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -24,25 +25,27 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
   {
     private readonly IAmbientDbContextFactory _ambientDbContextFactory;
     private readonly IsolationLevel? _isolationLevel;
+    private readonly DbContextScope _dbContextScope;
     private readonly bool _readOnly;
     private readonly Dictionary<DbContext, IDbContextTransaction> _transactions;
     private bool _completed;
     private bool _disposed;
 
-    public DbContextCollection(IAmbientDbContextFactory ambientDbContextFactory, bool readOnly = false, IsolationLevel? isolationLevel = null)
+    public DbContextCollection(DbContextScope dbContextScope, IAmbientDbContextFactory ambientDbContextFactory, bool readOnly = false, IsolationLevel? isolationLevel = null)
     {
       _disposed = false;
       _completed = false;
 
-      InitializedDbContexts = new Dictionary<Type, DbContext>();
+      InitializedDbContexts = new Dictionary<Type, (DbContext DbContext, IDbContextProxyBypass Proxy)>();
       _transactions = new Dictionary<DbContext, IDbContextTransaction>();
 
+      _dbContextScope = dbContextScope;
       _readOnly = readOnly;
       _isolationLevel = isolationLevel;
       _ambientDbContextFactory = ambientDbContextFactory;
     }
 
-    internal Dictionary<Type, DbContext> InitializedDbContexts { get; }
+    internal Dictionary<Type, (DbContext DbContext, IDbContextProxyBypass Proxy)> InitializedDbContexts { get; }
 
     public TDbContext GetOrCreate<TDbContext>() where TDbContext : DbContext
     {
@@ -57,9 +60,9 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       {
         // First time we've been asked for this particular DbContext type.
         // Create one, cache it and start its database transaction if needed.
-        var dbContext = _ambientDbContextFactory.CreateDbContext<TDbContext>();
+        var dbContext = _ambientDbContextFactory.CreateDbContext<TDbContext>(_dbContextScope, _readOnly);
 
-        InitializedDbContexts.Add(requestedType, dbContext);
+        InitializedDbContexts.Add(requestedType, (dbContext, (IDbContextProxyBypass)dbContext));
 
         if (_readOnly)
         {
@@ -73,7 +76,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         }
       }
 
-      return InitializedDbContexts[requestedType] as TDbContext;
+      return InitializedDbContexts[requestedType].DbContext as TDbContext;
     }
 
     public void Dispose()
@@ -110,7 +113,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       {
         try
         {
-          dbContext.Dispose();
+          dbContext.Proxy.DisposeDirect();
         }
         catch (Exception e)
         {
@@ -160,11 +163,11 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         {
           if (!_readOnly)
           {
-            c += dbContext.SaveChanges();
+            c += dbContext.Proxy.SaveChangesDirect();
           }
 
           // If we've started an explicit database transaction, time to commit it now.
-          var tran = getValueOrDefault(_transactions, dbContext);
+          var tran = getValueOrDefault(_transactions, dbContext.DbContext);
           if (tran != null)
           {
             tran.Commit();
@@ -226,11 +229,11 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         {
           if (!_readOnly)
           {
-            c += await dbContext.SaveChangesAsync(cancelToken).ConfigureAwait(false);
+            c += await dbContext.Proxy.SaveChangesDirectAsync(cancelToken).ConfigureAwait(false);
           }
 
           // If we've started an explicit database transaction, time to commit it now.
-          var tran = getValueOrDefault(_transactions, dbContext);
+          var tran = getValueOrDefault(_transactions, dbContext.DbContext);
           if (tran != null)
           {
             tran.Commit();
@@ -280,7 +283,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         // method. 
 
         // But if we've started an explicit database transaction, then we must roll it back.
-        var tran = getValueOrDefault(_transactions, dbContext);
+        var tran = getValueOrDefault(_transactions, dbContext.DbContext);
         if (tran != null)
         {
           try

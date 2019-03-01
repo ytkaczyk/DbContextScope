@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace DbContextScope.Demo
 {
-  internal class MemoryAmbientDbContextFactory : IAmbientDbContextFactory
+  internal class MemoryAmbientDbContextArgumentFactory : IAmbientDbContextArgumentFactory
   {
-    public TDbContext CreateDbContext<TDbContext>() where TDbContext : DbContext
+    public object[] CreateDbContextArguments<TDbContext>() where TDbContext : DbContext
     {
       if (typeof(TDbContext) == typeof(UserManagementDbContext))
       {
@@ -16,7 +16,7 @@ namespace DbContextScope.Demo
                     .UseInMemoryDatabase("DbContextScopeTestDatabase")
                     .ConfigureWarnings(warnings => { warnings.Ignore(InMemoryEventId.TransactionIgnoredWarning); });
 
-        return new UserManagementDbContext(config.Options) as TDbContext;
+        return new[] { config.Options };
       }
 
       throw new ArgumentOutOfRangeException(typeof(TDbContext).Name);

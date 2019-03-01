@@ -1,10 +1,9 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.DbContextScope.Implementations.Interceptors
+namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
 {
   internal class DbContextInterceptor : DbContextInterceptorBase
   {
@@ -15,12 +14,12 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Interceptors
       _dbContextScope = dbContextScope;
     }
 
-    protected override void HandleDispose(IInvocation invocation)
+    protected override void OnHandleDispose(IInvocation invocation)
     {
       _dbContextScope.Dispose();
     }
 
-    protected override int HandleSaveChanges(IInvocation invocation)
+    protected override int OnHandleSaveChanges(IInvocation invocation)
     {
       var dbContext = (DbContext)invocation.Proxy;
       var parentUpdater = new DetectModifiedEntitiesAndUpdateParentScope(dbContext, _dbContextScope);
@@ -31,18 +30,17 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Interceptors
       return changes;
     }
 
-    protected override Task<int> HandleSaveChangesAsync(IInvocation invocation)
+    protected override Task<int> OnHandleSaveChangesAsync(IInvocation invocation)
     {
       var dbContext = (DbContext)invocation.Proxy;
       var parentUpdater = new DetectModifiedEntitiesAndUpdateParentScope(dbContext, _dbContextScope);
 
       Task<int> returnValue;
 
-      var hasCancellationToken = invocation.Arguments.Any(a => a is CancellationToken);
-      if (hasCancellationToken)
+      var maybeCancellationToken = GetCancellationTokenFromArgs(invocation);
+      if (maybeCancellationToken.HasValue)
       {
-        var cancellationToken = (CancellationToken)invocation.Arguments.First(a => a is CancellationToken);
-        returnValue = saveChangesAndUpdateParentScopeAsync(parentUpdater, cancellationToken);
+        returnValue = saveChangesAndUpdateParentScopeAsync(parentUpdater, maybeCancellationToken.Value);
       }
       else
       {
@@ -58,6 +56,11 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Interceptors
       await parentUpdater.UpdateParentAsync(cancellationToken);
 
       return changes;
+    }
+
+    public override int GetHashCode()
+    {
+      return typeof(DbContextInterceptor).GetHashCode();
     }
   }
 }

@@ -2,7 +2,7 @@
 
 namespace DbContextScope.Tests.DatabaseContext
 {
-  public class TestDbContext : DbContext
+  public class TestDbContext : DbContext, ITestDbContext
   {
     public TestDbContext(DbContextOptions options)
       : base(options)
@@ -11,6 +11,12 @@ namespace DbContextScope.Tests.DatabaseContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Post> Posts { get; set; }
+
+    public override int SaveChanges()
+    {
+      // nope, nix da
+      return base.SaveChanges();
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

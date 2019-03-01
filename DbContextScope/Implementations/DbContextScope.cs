@@ -46,7 +46,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       else
       {
         _nested = false;
-        _dbContexts = new DbContextCollection(ambientDbContextFactory, readOnly, isolationLevel);
+        _dbContexts = new DbContextCollection(this, ambientDbContextFactory, readOnly, isolationLevel);
       }
 
       AmbientContextScopeMagic.SetAmbientScope(this);
@@ -165,14 +165,18 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       foreach (var contextInCurrentScope in _dbContexts.InitializedDbContexts.Values)
       {
         var correspondingParentContext =
-          _parentScope._dbContexts.InitializedDbContexts.Values.SingleOrDefault(parentContext => parentContext.GetType() == contextInCurrentScope.GetType());
+          _parentScope
+           ._dbContexts
+           .InitializedDbContexts
+           .Values
+           .SingleOrDefault(parentContext => parentContext.DbContext.GetType() == contextInCurrentScope.DbContext.GetType());
 
-        if (correspondingParentContext == null)
+        if (correspondingParentContext.DbContext == null)
         {
           continue; // No DbContext of this type has been created in the parent scope yet. So no need to refresh anything for this DbContext type.
         }
 
-        var refreshStrategy = getRefreshStrategy(contextInCurrentScope, correspondingParentContext);
+        var refreshStrategy = getRefreshStrategy(contextInCurrentScope.DbContext, correspondingParentContext.DbContext);
         // Both our scope and the parent scope have an instance of the same DbContext type. 
         // We can now look in the parent DbContext instance for entities that need to
         // be refreshed.
@@ -206,14 +210,18 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       foreach (var contextInCurrentScope in _dbContexts.InitializedDbContexts.Values)
       {
         var correspondingParentContext =
-          _parentScope._dbContexts.InitializedDbContexts.Values.SingleOrDefault(parentContext => parentContext.GetType() == contextInCurrentScope.GetType());
+          _parentScope
+           ._dbContexts
+           .InitializedDbContexts
+           .Values
+           .SingleOrDefault(parentContext => parentContext.DbContext.GetType() == contextInCurrentScope.DbContext.GetType());
 
-        if (correspondingParentContext == null)
+        if (correspondingParentContext.DbContext == null)
         {
           continue;
         }
 
-        var refreshStrategy = getRefreshStrategy(contextInCurrentScope, correspondingParentContext);
+        var refreshStrategy = getRefreshStrategy(contextInCurrentScope.DbContext, correspondingParentContext.DbContext);
         foreach (var toRefresh in entitiesToRefresh)
         {
           await refreshStrategy.RefreshAsync(toRefresh, cancellationToken);

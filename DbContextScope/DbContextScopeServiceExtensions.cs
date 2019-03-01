@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using EntityFrameworkCore.DbContextScope.Implementations;
+﻿using EntityFrameworkCore.DbContextScope.Implementations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EntityFrameworkCore.DbContextScope
@@ -10,7 +9,7 @@ namespace EntityFrameworkCore.DbContextScope
     {
       self.AddScoped<IDbContextScopeFactory, DbContextScopeFactory>();
       self.AddScoped<IAmbientDbContextLocator, AmbientDbContextLocator>();
-      self.AddScoped<IAmbientDbContextFactory, ActivatorAmbientDbContextFactory>();
+      self.AddScoped<IAmbientDbContextFactory, ProxyAmbientDbContextFactory>();
 
       return self;
     }

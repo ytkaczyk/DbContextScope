@@ -1,14 +1,10 @@
 ﻿using System.Data;
-using Castle.DynamicProxy;
-using EntityFrameworkCore.DbContextScope.Implementations.Interceptors;
 using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.DbContextScope
 {
   public static class DbContextScopeFactoryExtensions
   {
-    private static readonly ProxyGenerator proxyGenerator = new ProxyGenerator();
-
     /// <summary>
     /// Creates a new DbContextScope.
     /// By default, the new scope will join the existing ambient scope. This
@@ -22,10 +18,8 @@ namespace EntityFrameworkCore.DbContextScope
     public static TDbContext Open<TDbContext>(this IDbContextScopeFactory self, DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting) where TDbContext : DbContext
     {
       var dbContextScope = self.Create(joiningOption);
-      var interceptor = new DbContextInterceptor(dbContextScope);
-      var proxy = createDbContextProxy(dbContextScope.Get<TDbContext>(), interceptor, true);
 
-      return proxy;
+      return dbContextScope.Get<TDbContext>();
     }
 
     /// <summary>
@@ -41,10 +35,8 @@ namespace EntityFrameworkCore.DbContextScope
     public static TDbContext OpenReadOnly<TDbContext>(this IDbContextScopeFactory self, DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting) where TDbContext : DbContext
     {
       var dbContextScope = self.CreateReadOnly(joiningOption);
-      var interceptor = new DbContextReadonlyInterceptor(dbContextScope);
-      var proxy = createDbContextProxy(dbContextScope.Get<TDbContext>(), interceptor, false);
 
-      return proxy;
+      return dbContextScope.Get<TDbContext>();
     }
 
     /// <summary>
@@ -62,10 +54,8 @@ namespace EntityFrameworkCore.DbContextScope
     public static TDbContext Open<TDbContext>(this IDbContextScopeFactory self, IsolationLevel isolationLevel) where TDbContext : DbContext
     {
       var dbContextScope = self.CreateWithTransaction(isolationLevel);
-      var interceptor = new DbContextInterceptor(dbContextScope);
-      var proxy = createDbContextProxy(dbContextScope.Get<TDbContext>(), interceptor, true);
 
-      return proxy;
+      return dbContextScope.Get<TDbContext>();
     }
     
     /// <summary>
@@ -80,37 +70,8 @@ namespace EntityFrameworkCore.DbContextScope
     public static TDbContext OpenReadOnly<TDbContext>(this IDbContextScopeFactory self, IsolationLevel isolationLevel) where TDbContext : DbContext
     {
       var dbContextScope = self.CreateReadOnlyWithTransaction(isolationLevel);
-      var interceptor = new DbContextReadonlyInterceptor(dbContextScope);
-      var proxy = createDbContextProxy(dbContextScope.Get<TDbContext>(), interceptor, false);
 
-      return proxy;
-    }
-
-    private static TDbContext createDbContextProxy<TDbContext>(TDbContext dbContext, DbContextInterceptorBase interceptor, bool tracking) where TDbContext : DbContext
-    {
-      /*
-       * 1. create DbContextScope
-       * 2. create DbContext target
-       * 3. create an proxy of TDbContext
-       *
-       * proxy will do:
-       * - intercept SaveChanges/Async
-       *   -> track dirty/modified items before Save
-       *   -> forward to scope.SaveChanges/Async
-       *   -> call RefreshEntitiesInParentScope/Async
-       *      
-       * - intercept Dispose -> forward scope.Dispose
-       */
-
-      var proxyGenerationOptions = new ProxyGenerationOptions(interceptor);
-      var proxy = proxyGenerator.CreateClassProxyWithTarget(dbContext, proxyGenerationOptions, interceptor);
-
-      if (!tracking)
-      {
-        dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
-      }
-
-      return proxy;
+      return dbContextScope.Get<TDbContext>();
     }
   }
 }

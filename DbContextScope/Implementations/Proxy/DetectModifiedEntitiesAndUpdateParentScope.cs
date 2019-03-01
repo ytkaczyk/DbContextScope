@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace EntityFrameworkCore.DbContextScope.Implementations.Interceptors
+namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
 {
   internal class DetectModifiedEntitiesAndUpdateParentScope
   {

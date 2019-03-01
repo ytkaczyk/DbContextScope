@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 
-namespace EntityFrameworkCore.DbContextScope.Implementations.Interceptors
+namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
 {
   internal class DbContextReadonlyInterceptor : DbContextInterceptorBase
   {
@@ -13,19 +13,24 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Interceptors
       _dbContextScope = dbContextScope;
     }
 
-    protected override void HandleDispose(IInvocation invocation)
+    protected override void OnHandleDispose(IInvocation invocation)
     {
       _dbContextScope.Dispose();
     }
 
-    protected override int HandleSaveChanges(IInvocation invocation)
+    protected override int OnHandleSaveChanges(IInvocation invocation)
     {
       throw new InvalidOperationException("The DbContext is readonly and doesn't support save changes.");
     }
 
-    protected override Task<int> HandleSaveChangesAsync(IInvocation invocation)
+    protected override Task<int> OnHandleSaveChangesAsync(IInvocation invocation)
     {
       throw new InvalidOperationException("The DbContext is readonly and doesn't support save changes.");
+    }
+
+    public override int GetHashCode()
+    {
+      return typeof(DbContextReadonlyInterceptor).GetHashCode();
     }
   }
 }

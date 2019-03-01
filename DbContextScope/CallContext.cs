@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 
 namespace EntityFrameworkCore.DbContextScope
@@ -28,6 +29,17 @@ namespace EntityFrameworkCore.DbContextScope
     /// <returns>The object in the call context associated with the specified name, or a default value for <typeparamref name="T"/> if none is found.</returns>
     public static T GetData<T>(string name) =>
       TypedCallContext<T>.State.TryGetValue(name, out AsyncLocal<T> data) ? data.Value : default(T);
+
+    public static IDisposable OpenScope(string name)
+    {
+      SetData(name, new object());
+      return new ActionDisposable(() => SetData<object>(name, null));
+    }
+
+    public static bool IsInScope(string name)
+    {
+      return GetData<object>(name) != null;
+    }
 
     private static class TypedCallContext<T>
     {

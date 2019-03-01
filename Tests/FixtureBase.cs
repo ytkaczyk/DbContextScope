@@ -2,6 +2,7 @@
 using EntityFrameworkCore.DbContextScope;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -25,7 +26,7 @@ namespace DbContextScope.Tests
 
       // from fixtureBase
       services.AddScoped<MemoryAmbientDbContextFactoryOptions>();
-      services.AddScoped<IAmbientDbContextFactory, MemoryAmbientDbContextFactory>();
+      services.AddScoped<IAmbientDbContextArgumentFactory, MemoryAmbientDbContextArgumentFactory>();
 
       // from test
       OnTestSetup(services);
@@ -58,25 +59,25 @@ namespace DbContextScope.Tests
       public string DbContextScopeKey { get; set; }
     }
 
-    private class MemoryAmbientDbContextFactory : IAmbientDbContextFactory
+    private class MemoryAmbientDbContextArgumentFactory : IAmbientDbContextArgumentFactory
     {
       private readonly MemoryAmbientDbContextFactoryOptions _options;
 
-      public MemoryAmbientDbContextFactory(MemoryAmbientDbContextFactoryOptions options)
+      public MemoryAmbientDbContextArgumentFactory(MemoryAmbientDbContextFactoryOptions options)
       {
         _options = options;
       }
 
-      public TDbContext CreateDbContext<TDbContext>() where TDbContext : DbContext
+      public object[] CreateDbContextArguments<TDbContext>() where TDbContext : DbContext
       {
         var config = new DbContextOptionsBuilder()
-                    .UseInMemoryDatabase(_options.DbContextScopeKey)
+                    .UseInMemoryDatabase(_options.DbContextScopeKey, globalDbRoot)
                     .ConfigureWarnings(warnings => { warnings.Ignore(InMemoryEventId.TransactionIgnoredWarning); });
 
-        var instance = Activator.CreateInstance(typeof(TDbContext), config.Options);
-
-        return (TDbContext)instance;
+        return new object[] { config.Options };
       }
+
+      private static readonly InMemoryDatabaseRoot globalDbRoot = new InMemoryDatabaseRoot();
     }
   }
 }
