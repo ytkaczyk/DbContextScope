@@ -6,19 +6,26 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EntityFrameworkCore.DbContextScope.Implementations
 {
   internal class DbContextScope : IDbContextScope
   {
     private readonly DbContextCollection _dbContexts;
+    
+    /// <summary>
+    /// The parent scope uses the same DbContext instances as we do - no need to refresh anything
+    /// </summary>
     private readonly bool _nested;
     private readonly DbContextScope _parentScope;
     private readonly bool _readOnly;
+    private readonly IScopeDiagnostic _scopeDiagnostic;
+    private readonly ILogger<DbContextScope> _logger;
     private bool _completed;
     private bool _disposed;
 
-    public DbContextScope(DbContextScopeOption joiningOption, bool readOnly, IsolationLevel? isolationLevel, IAmbientDbContextFactory ambientDbContextFactory)
+    public DbContextScope(DbContextScopeOption joiningOption, bool readOnly, IsolationLevel? isolationLevel, IAmbientDbContextFactory ambientDbContextFactory, ILoggerFactory loggerFactory, IScopeDiagnostic scopeDiagnostic)
     {
       if (isolationLevel.HasValue && joiningOption == DbContextScopeOption.JoinExisting)
       {
@@ -31,6 +38,8 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       _disposed = false;
       _completed = false;
       _readOnly = readOnly;
+      _scopeDiagnostic = scopeDiagnostic;
+      _logger = loggerFactory.CreateLogger<DbContextScope>();
 
       _parentScope = AmbientContextScopeMagic.GetAmbientScope();
       if (_parentScope != null && joiningOption == DbContextScopeOption.JoinExisting)
@@ -75,6 +84,8 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
                                           + "each implement a single business transaction.");
       }
 
+      _scopeDiagnostic?.CalledMethods.Add("SaveChanges");
+
       // Only save changes if we're not a nested scope. Otherwise, let the top-level scope 
       // decide when the changes should be saved.
       var c = 0;
@@ -116,6 +127,8 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
                                           + "each implement a single business transaction.");
       }
 
+      _scopeDiagnostic?.CalledMethods.Add("SaveChangesAsync");
+
       // Only save changes if we're not a nested scope. Otherwise, let the top-level scope 
       // decide when the changes should be saved.
       var c = 0;
@@ -131,18 +144,9 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
 
     public void RefreshEntitiesInParentScope(IEnumerable entities)
     {
-      if (entities == null)
+      if (entities == null || _parentScope == null || _nested)
       {
-        return;
-      }
-
-      if (_parentScope == null)
-      {
-        return;
-      }
-
-      if (_nested) // The parent scope uses the same DbContext instances as we do - no need to refresh anything
-      {
+        _scopeDiagnostic?.CalledMethods.Add("RefreshEntitiesInParentScope-SKIP");
         return;
       }
 
@@ -160,6 +164,8 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       // NOTE: DbContext implements the ObjectContext property of the IObjectContextAdapter interface explicitely.
       // So we must cast the DbContext instances to IObjectContextAdapter in order to access their ObjectContext.
       // This cast is completely safe.
+
+      _scopeDiagnostic?.CalledMethods.Add("RefreshEntitiesInParentScope");
 
       var entitiesToRefresh = entities as object[] ?? entities.Cast<object>().ToArray();
       foreach (var contextInCurrentScope in _dbContexts.InitializedDbContexts.Values)
@@ -191,20 +197,13 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
     {
       // See comments in the sync version of this method for an explanation of what we're doing here.
 
-      if (entities == null)
+      if (entities == null || _parentScope == null || _nested)
       {
+        _scopeDiagnostic?.CalledMethods.Add("RefreshEntitiesInParentScopeAsync-SKIP");
         return;
       }
 
-      if (_parentScope == null)
-      {
-        return;
-      }
-
-      if (_nested)
-      {
-        return;
-      }
+      _scopeDiagnostic?.CalledMethods.Add("RefreshEntitiesInParentScopeAsync");
 
       var entitiesToRefresh = entities as object[] ?? entities.Cast<object>().ToArray();
       foreach (var contextInCurrentScope in _dbContexts.InitializedDbContexts.Values)
@@ -240,6 +239,8 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       {
         return;
       }
+
+      _scopeDiagnostic?.CalledMethods.Add("Dispose");
 
       // Commit / Rollback and dispose all of our DbContext instances
       if (!_nested)

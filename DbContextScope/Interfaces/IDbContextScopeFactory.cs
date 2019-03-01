@@ -7,7 +7,7 @@ namespace EntityFrameworkCore.DbContextScope
   /// Convenience methods to create a new ambient DbContextScope. This is the prefered method
   /// to create a DbContextScope.
   /// </summary>
-  public interface IDbContextScopeFactory
+  public interface IDbContextScopeFactory : IDisposable
   {
     // TODO: hide Create* with an internal interface or at least with an "advanced" interface as service
 

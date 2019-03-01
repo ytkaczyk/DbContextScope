@@ -47,11 +47,17 @@ namespace DbContextScope.Tests
     [TestCleanup]
     public void TestCleanup()
     {
+      OnTestCleanup();
+
       TestServiceProvider = null;
       _testServiceScope?.Dispose();
       _testServiceScope = null;
       _testContainer?.Dispose();
       _testContainer = null;
+    }
+
+    protected virtual void OnTestCleanup()
+    {
     }
 
     private class MemoryAmbientDbContextFactoryOptions
