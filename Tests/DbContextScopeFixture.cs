@@ -124,21 +124,12 @@ namespace DbContextScope.Tests
       }
     }
 
-    [TestMethod, Ignore("fixme")]
+    [TestMethod]
     public void Scope_and_open_and_save_on_open_context_should_make_entity_in_parent_visible()
     {
       // arrange
       var openEntity = new DummyEntity { Name = "Bob" };
       DummyEntity scopeEntity;
-
-      /*
-       * PROBLEM here:
-       * - the inner dbContext is joining the outer dbContext
-       * - the tracked dbContext in the outer/parent is not the proxy, thus, no updates were populated.
-       * -> maybe the proxy-dbContexts may never "join" the parent scope?
-       * -> maybe we should replace or stack the joined dbScopes?
-       * --> who is disposing the inner-most dbContext then and how?
-       */
 
       // act
       using (var scope = DbContextScopeFactory.Create())
@@ -156,6 +147,7 @@ namespace DbContextScope.Tests
 
       // assert
       Assert.AreEqual(openEntity.Id, scopeEntity.Id);
+      DeepComparison.ValidateCompare(openEntity, scopeEntity);
     }
 
     [TestMethod]

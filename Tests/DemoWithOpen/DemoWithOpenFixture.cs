@@ -9,9 +9,10 @@ using EntityFrameworkCore.DbContextScope;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+
 namespace DbContextScope.Tests.DemoWithOpen
 {
-  [TestClass, Ignore("fixme")]
+    [TestClass]
   public class DemoWithOpenFixture : FixtureBase
   {
     protected override void OnTestSetup(ServiceCollection services)
@@ -41,6 +42,7 @@ namespace DbContextScope.Tests.DemoWithOpen
       var mary = UserQueryService.GetUser(marysSpec.Id);
 
       Assert.IsNotNull(mary);
+      DeepComparison.ValidateCompare(marysSpec, mary);
     }
 
     [TestMethod]
@@ -53,10 +55,13 @@ namespace DbContextScope.Tests.DemoWithOpen
       var createdUsers = UserQueryService.GetUsers(johnSpec.Id, jeanneSpec.Id);
 
       Assert.AreEqual(2, createdUsers.Count());
+      DeepComparison.ValidateCompare(
+          new UserCreationSpec[] { johnSpec , jeanneSpec }.OrderBy(r => r.Id),
+          createdUsers.OrderBy(r => r.Id));
     }
 
     [TestMethod]
-    public void Create_list_of_users_in_failing_atomic_transation_should_not_save_anything_at_all()
+    public void Create_list_of_users_in_failing_atomic_transaction_should_not_save_anything_at_all()
     {
       var julieSpec = new UserCreationSpec("Julie", "julie@example.com");
       var marcSpec = new UserCreationSpec("Marc", "marc@example.com");
@@ -78,6 +83,9 @@ namespace DbContextScope.Tests.DemoWithOpen
       var usersFoundAsync = await UserQueryService.GetTwoUsersAsync(johnSpec.Id, jeanneSpec.Id);
 
       Assert.AreEqual(2, usersFoundAsync.Count);
+      DeepComparison.ValidateCompare(
+        new UserCreationSpec[] { johnSpec, jeanneSpec }.OrderBy(r => r.Id),
+        usersFoundAsync.OrderBy(r => r.Id));
     }
 
     [TestMethod]
@@ -89,6 +97,7 @@ namespace DbContextScope.Tests.DemoWithOpen
       var userMaybeUncommitted = UserQueryService.GetUserUncommitted(johnSpec.Id);
 
       Assert.IsNotNull(userMaybeUncommitted);
+      DeepComparison.ValidateCompare(johnSpec, userMaybeUncommitted);
     }
 
     [TestMethod]

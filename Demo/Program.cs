@@ -6,6 +6,7 @@ using DbContextScope.Demo.CommandModel;
 using DbContextScope.Demo.DatabaseContext;
 using DbContextScope.Demo.Repositories;
 using EntityFrameworkCore.DbContextScope;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DbContextScope.Demo
@@ -16,6 +17,7 @@ namespace DbContextScope.Demo
     {
       var services = new ServiceCollection();
       services.AddDbContextScope();
+      services.AddScoped<InMemoryDatabaseRoot>();
       services.AddScoped<IAmbientDbContextArgumentFactory, MemoryAmbientDbContextArgumentFactory>();
 
       services.AddScoped<IUserRepository, UserRepository>();
