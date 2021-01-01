@@ -61,7 +61,7 @@ namespace DbContextScope.Tests.DemoWithOpen.Repositories
 
     public Task<User> GetAsync(Guid userId)
     {
-      return DbContext.Users.FindAsync(userId);
+      return DbContext.Users.FindAsync(userId).AsTask();
     }
 
     public void Add(User user)
