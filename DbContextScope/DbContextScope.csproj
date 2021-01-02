@@ -10,26 +10,49 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>Mehdi El Gueddari,Tim Calvert</Authors>
-    <PackageId>EntityFrameworkCore.DbContextScope</PackageId>
-    <PackageProjectUrl>https://github.com/tncalvert/DbContextScope</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/tncalvert/DbContextScope/master/LICENSE</PackageLicenseUrl>
+    <Authors>Mehdi El Gueddari, Tim Calvert, Yves Tkaczyk et al.</Authors>
+    <PackageId>EFCore5.DbContextScope</PackageId>
+    <PackageProjectUrl>https://github.com/ytkaczyk/DbContextScope</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageVersion>1.0.0</PackageVersion>
-    <Description>DbContextScope for EF Core. Forked from https://github.com/mehdime/DbContextScope. </Description>
+    <Description>DbContextScope for EF Core 5 and .Net Standard 2.1. 
+Forked from https://github.com/mehdime/DbContextScope.</Description>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/tncalvert/DbContextScope</RepositoryUrl>
-    <PackageTags>EntityFramework EFCore DbContext DbContextScope</PackageTags>
+    <RepositoryUrl>https://github.com/ytkaczyk/DbContextScope</RepositoryUrl>
+    <PackageTags>EntityFramework, EFCore,  EFCore5, DbContext, DbContextScope</PackageTags>
     <RootNamespace>EntityFrameworkCore.DbContextScope</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>DbContextScope for Entity Framework Core 5</Title>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <!-- Embed source files that are not tracked by the source control manager in the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseFile></PackageLicenseFile>
+    <PackageLicenseExpression></PackageLicenseExpression>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+  
   <ItemGroup>
     <None Remove="DbContextScope.csproj.DotSettings" />
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt"/>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.4.1" />
     <PackageReference Include="Castle.Core.AsyncInterceptor" Version="1.7.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
