@@ -1,10 +1,10 @@
 DbContextScope
 ==============
 
-```
-2020-12-12 - ytkaczyk
-This is a fork to support Entity Framework Core 5.0 with a target of .netstandard 2.1
-```
+> 2020-12-12 (ytkaczyk) - 
+> Uses Entity Framework Core 5.0 with a target of .netstandard 2.1
+
+![Build](https://github.com/ytkaczyk/DbContextScope/workflows/Build/badge.svg)
 
 A simple and flexible way to manage your Entity Framework DbContext instances.
 
