@@ -1,0 +1,36 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '5.0.x'
+  CONFIGURATION: 'Release'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{env.DOTNET_VERSION}}
+
+    - name: Restore dependencies
+      run: dotnet restore
+        
+    - name: Build
+      run: dotnet build --no-restore --configuration ${{env.CONFIGURATION}}
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --configuration ${{env.CONFIGURATION}}
+
+    - name: Create NuGet packages
+      run: dotnet pack --configuration ${{env.CONFIGURATION}}
+        
+    - name: Publish to NuGet.org
+      run: dotnet nuget push '.\bin\${{env.CONFIGURATION}}\EFCore5*.nupkg' -s "https://api.nuget.org/v3/index.json" -k ${{ secrets.NUGET_API_KEY }} 
