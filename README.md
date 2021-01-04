@@ -5,7 +5,8 @@ DbContextScope
 > Uses Entity Framework Core 5.0 with a target of .netstandard 2.1
 
 ![Build](https://github.com/ytkaczyk/DbContextScope/workflows/Build/badge.svg)
-
+[![Nuget](https://img.shields.io/nuget/v/EFCore5.DbContextScope?logo=nuget)](https://www.nuget.org/packages/EFCore5.DbContextScope/)
+ 
 A simple and flexible way to manage your Entity Framework DbContext instances.
 
 `DbContextScope` was created out of the need for a better way to manage DbContext instances in Entity Framework-based applications. 
