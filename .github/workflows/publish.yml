@@ -8,7 +8,7 @@ env:
   CONFIGURATION: 'Release'
 
 jobs:
-  build:
+  publish:
     runs-on: windows-latest
 
     steps:
