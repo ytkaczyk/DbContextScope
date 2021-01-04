@@ -33,4 +33,4 @@ jobs:
       run: dotnet pack --configuration ${{env.CONFIGURATION}}
         
     - name: Publish to NuGet.org
-      run: dotnet nuget push '.\bin\${{env.CONFIGURATION}}\EFCore5*.nupkg' -s "https://api.nuget.org/v3/index.json" -k ${{ secrets.NUGET_API_KEY }} 
+      run: dotnet nuget push '.\DbContextScope\bin\${{env.CONFIGURATION}}\EFCore5*.nupkg' -s "https://api.nuget.org/v3/index.json" -k ${{ secrets.NUGET_API_KEY }} 
