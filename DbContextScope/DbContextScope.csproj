@@ -21,7 +21,6 @@ Forked from https://github.com/mehdime/DbContextScope.</Description>
     <RepositoryUrl>https://github.com/ytkaczyk/DbContextScope</RepositoryUrl>
     <PackageTags>EntityFramework, EFCore,  EFCore5, DbContext, DbContextScope</PackageTags>
     <RootNamespace>EntityFrameworkCore.DbContextScope</RootNamespace>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Title>DbContextScope for Entity Framework Core 5</Title>
   </PropertyGroup>
 
